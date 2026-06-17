@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+{% include "template_head.html" %}
+<body>
+
+        {% include "template_header.html" %}
+
+        <div class="deck-filters">
+            <div class="filter-group">
+                {% for creator in (all_decks | map(attribute='player_name') | unique | list) %}
+                  <button class="filter-tag"
+                          data-filter-type="creator"
+                          data-filter-value="{{ creator }}">
+                    {{ creator }}
+                  </button>
+                {% endfor %}
+            </div>
+            <div class="filter-group">
+                {% for s in (all_decks | map(attribute='set_deck') | unique | list) %}
+                  <button class="filter-tag"
+                          data-filter-type="set"
+                          data-filter-value="{{ s }}">
+                    Set {{ s }}
+                  </button>
+                {% endfor %}
+            </div>
+            <div class="filter-group">
+                  <button class="filter-tag"
+                          data-filter-type="status"
+                          data-filter-value="WIP">
+                    WIP
+                  </button>
+                <button class="filter-tag"
+                          data-filter-type="status"
+                          data-filter-value="Stable">
+                    Stable
+                  </button>
+                <button class="filter-tag"
+                          data-filter-type="status"
+                          data-filter-value="4Fun">
+                    4Fun
+                  </button>
+                <button class="filter-tag"
+                          data-filter-type="status"
+                          data-filter-value="Public">
+                    Public
+                  </button>
+            </div>
+
+        </div>
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="content">
+            {% if not youtube %}
+            <a href="/new-deck" class="card" data-creator="system" data-set="system" data-status="system">
+                {% if current_user.team is not none %}
+                    <img src="{{ url_for('static', filename='img/teams/'+current_user.team+'.webp') }}" alt="Imagen">
+                {% else %}
+                    <img src="{{ url_for('static', filename='img/logo.webp') }}" alt="Imagen">
+                {% endif %}
+                <div class="info">
+                    <h3>Crear Nuevo Mazo</h3>
+                    <p></p>
+                </div>
+            </a>
+            {% endif %}
+            {% for deck in all_decks %}
+            <div class="card" deck-id="{{deck.id_deck}}" data-creator="{{ deck.player_name }}" data-set="{{ deck.set_deck }}" data-status="{{ deck.status }}" >
+                <span class="deck-tag">{{deck.player_name}}</span>
+                <span class="{% if deck.status == 'WIP' %}deck-status-wip{% elif deck.status == '4Fun' %}deck-status-4fun{% elif deck.status == 'Stable' %}deck-status-stable{% elif deck.status == 'Public' %}deck-status-stable{% endif %}">{{deck.status}}</span>
+                <img src="{{ url_for('static', filename='img/decks/'+deck.image+'.webp') }}" alt="Imagen">
+                <div class="info">
+                    <div class="title-box-decks">
+                        <h3>
+                            <img src="{{ url_for('static', filename='img/ink/'+deck.faction|string+'.webp') }}" alt="Imagen">
+                            {{deck.deck_name}}
+                            <img src="{{ url_for('static', filename='img/ink/'+deck.faction|string+'.webp') }}" alt="Imagen">
+                        </h3>
+                    </div>
+                    <p>[Set {{deck.set_deck}}]</p>
+                </div>
+            </div>
+            {% endfor %}
+
+
+        </main>
+
+{% if youtube %}
+    <script src="{{ url_for('static', filename='js/deck-youtube.js') }}"></script>
+{% else %}
+    <script src="{{ url_for('static', filename='js/deck.js') }}"></script>
+{% endif %}
+</body>
+{% include "footer.html" %}
+</html>

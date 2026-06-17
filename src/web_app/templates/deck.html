@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+{% include "template_head.html" %}
+<body>
+
+        {% include "template_header.html" %}
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="content">
+
+            <div class="deck-view">
+
+                <!-- Fila superior -->
+                <div class="deck-header">
+                    <img class="deck-image" src="{{ url_for('static', filename='img/decks/'+deck.image+'.webp') }}" alt="Imagen del mazo">
+
+                    <div class="deck-info">
+                        <h2 class="deck-title">{{deck.deck_name}}</h2>
+                        <p>Set {{deck.set_deck}}</p>
+                        <p>{{deck.player_name}}</p>
+                        <p>Version {{deck.version}}</p>
+                        <p>{{deck.date_update}}</p>
+                    </div>
+                    <div class="deck-actions">
+                        <form action="/view-deck/{{deck.id_deck}}" method="POST">
+                            <select name="version" class="version-select">
+                                {% if deck.versions is not none %}
+                                    {% for num in deck.versions.split(',') %}
+                                        <option value="{{num}}" {% if (num | int)==deck.version %}selected{% endif %}>Versión {{num}}</option>
+                                    {% endfor %}
+                                {% endif %}
+                            </select>
+
+                            <button class="btn-action" type="submit">Ver</button>
+                        </form>
+
+
+                        <img src="{{ url_for('static', filename='img/logo-border.webp') }}" class="logo-photo" alt="Logo">
+
+
+                    </div>
+
+                </div>
+                <!-- Deck Quick Data -->
+                <input type="hidden" id="deck_cards" value='{{deck.all_cards | tojson}}' >
+                <div class="deck-header">
+                    <div id="deckStats">
+                        <button id="btnCopiar" data-text="{{deck.deck_list}}" class="btn-action">Exportar</button>
+
+                        {% if deck.id_player == current_user.id %}
+                            <form action="/edit-deck/{{deck.id_deck}}" method="POST">
+                                <button data-text="{{deck.deck_list}}" class="btn-action">Editar</button>
+                            </form>
+                            <form action="/edit-deck-lab/{{deck.id_deck}}" method="POST">
+                                <button data-text="{{deck.deck_list}}" class="btn-action no-mobile">Laboratorio</button>
+                            </form>
+                        {% endif %}
+                        <button id="download-btn" class="btn-action no-mobile">📥 Foto</button>
+
+                        <form action="/guide/{{deck.id_deck}}" method="GET">
+                            <button id="guide" class="btn-action">📖 Guía</button>
+                        </form>
+                        <form action="/pdf/{{deck.id_deck}}" method="GET">
+                            <button class="btn-action">📄 PDF</button>
+                        </form>
+                    </div>
+
+                    <form action="/mulligan/{{deck.id_deck}}" method="GET">
+                            <button id="mulligan" class="btn-action">Mulligan</button>
+                    </form>
+
+                    <form action="/training/{{deck.id_deck}}" method="GET">
+                            <button id="training" class="btn-action no-mobile">Training</button>
+                    </form>
+
+                </div>
+                <br>
+                <div class="deck-header">
+                    <div class="deck-stat">
+                        <img src="{{ url_for('static', filename='img/ink/deck.svg') }}" class="deck-stat-icon">
+                        <span id="totalCards">
+                            {{ deck.all_cards | sum(attribute='qty') }}
+                        </span>
+                    </div>
+                    <canvas class="height-chart-deck" id="inkCurveChart"></canvas>
+                    <span class="{% if deck.status == 'WIP' %}deck-status-wip-deck{% elif deck.status == '4Fun' %}deck-status-4fun-deck{% elif deck.status == 'Stable' %}deck-status-stable-deck{% elif deck.status == 'Public' %}deck-status-stable-deck{% endif %}">{{deck.status}}</span>
+                </div>
+                <!-- Deck list -->
+                <div class="deck-list">
+                    <!-- Cada carta -->
+                    {% for card in deck.all_cards %}
+                    <div class="card-slot">
+                        <img src="{{ url_for('static', filename='img/card_images/'+card.image) }}" alt="{{card.card}}" class="card-img">
+                        <span class="card-qty">{{card.qty}}</span>
+                    </div>
+                    {% endfor %}
+                    <div id="cardModal" class="modal">
+                        <span class="close">&times;</span>
+                        <img class="modal-content" id="modalImg">
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="comments-section">
+
+                <h3>Comentarios</h3>
+
+                <!-- LISTA DE COMENTARIOS -->
+                <div class="comments-list">
+
+                    {% for comment in all_comments%}
+                    <div class="comment">
+                        <div class="comment-header">
+                            <span class="comment-user">{{comment.player_name}}</span>
+                            <span class="comment-date">[Version {{comment.version}}] {{comment.date_created}}</span>
+                        </div>
+                        <div class="comment-body">
+                            {{comment.comment | replace('\n', '<br>') | safe}}
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                </div>
+
+                <!-- FORMULARIO PARA ESCRIBIR UN COMENTARIO -->
+                <form action="/comment/{{ deck.id_deck }}" method="POST" class="comment-form">
+                    <label for="comentario">Añadir comentario</label>
+                    <textarea id="comentario" name="comentario" rows="4" placeholder="Escribe tu comentario..." required></textarea>
+                    <button type="submit">Publicar</button>
+                </form>
+
+            </div>
+
+            <div class="statistics-section">
+
+                <h2>Estadísticas</h2>
+
+                <!-- JSON embebido -->
+                <div class="hidden-deck-info" id="rounds-data">
+                    {{ data_deck|tojson }}
+                </div>
+
+                <!-- Filtros -->
+                <div class="filters-container">
+
+                    <div class="filter-block">
+                        <h3>Jugadores</h3>
+                        <div id="player-filters" class="filter-list"></div>
+                    </div>
+
+                    <div class="filter-block">
+                        <h3>Eventos</h3>
+                        <div id="tournament-filters" class="filter-list"></div>
+                    </div>
+
+                    <div class="filter-block">
+                        <h3>Versiones</h3>
+                        <div id="version-filters" class="filter-list"></div>
+                    </div>
+                </div>
+
+                <!-- Resumen -->
+                <div id="general-stats" class="stats-block stats-grid"></div>
+
+                <!-- Winrate por combinación de tintas -->
+                <h3>Win-Rate</h3>
+                <div id="ink-stats" class="stats-grid"></div>
+
+            </div>
+
+
+        </main>
+
+    <script src="{{ url_for('static', filename='js/copy.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/modal.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/stats.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/chart.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/deck-chart.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/html2canvas.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/download-image-deck.js') }}"></script>
+</body>
+{% include "footer.html" %}
+</html>

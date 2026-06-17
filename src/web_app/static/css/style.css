@@ -1,0 +1,2035 @@
+/* ---------- RESET GLOBAL ---------- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden; /* evita scroll horizontal */
+    font-family: Arial, sans-serif;
+}
+/* Fondo general para TODA la web */
+body {
+    padding-bottom: 90px;
+    background: linear-gradient(135deg, #05070a 0%, #0b0f17 100%);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+}
+
+.error {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin: 10px auto;
+    border: none;
+    border-radius: 5px;
+    background-color: #f8d7da;  /* Rojo claro */
+    color: #721c24;  /* Texto oscuro para contraste */
+    display: block;
+    font-size: 16px;
+    text-align: center;
+}
+
+.container {
+    width: 100%;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.logo {
+    width: 160px;
+    max-width: 40vw;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+.logo-photo {
+    width: 200px;
+    max-width: 40vw;
+    height: auto;
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    display: none;
+}
+
+.box {
+    width: 400px;
+    max-width: 90%;
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 8px;
+
+    /* Glow blanco suave */
+    box-shadow: 0 0 35px rgba(255, 255, 255, 0.55);
+
+    text-align: center;
+}
+
+.box input {
+    width: 90%;
+    padding: 10px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.box button {
+    width: 95%;
+    padding: 10px;
+    margin-top: 10px;
+    border: none;
+    background: #333;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.box button:hover {
+    background: #555;
+}
+
+.toggle {
+    margin-top: 12px;
+    font-size: 14px;
+    cursor: pointer;
+    color: #0066cc;
+}
+.toggle:hover {
+    text-decoration: underline;
+}
+
+.hidden {
+    display: none;
+}
+
+/* ---------- TOPBAR ---------- */
+.topbar {
+    width: 100%;
+    height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 10px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(8px);
+}
+
+.topbar .logo {
+    margin-top: 20px;
+    height: 60px;
+    width: auto; /* Mantiene la proporción original */
+}
+
+.mobile-menu,.mobile-menu-simple {
+    display: none;
+    margin-top: 10px;
+}
+
+
+.menu {
+    display: flex;
+    justify-content: center;
+    flex: 1;
+    gap: 25px;
+}
+
+.menu a {
+    color: white;
+    text-decoration: none;
+    font-size: 1rem;
+}
+
+.menu a:hover {
+    color: #bdbdbd;
+}
+
+/* Media query para pantallas pequeñas */
+@media (max-width: 768px) {
+    /* Ocultar el menú horizontal en móviles */
+    .menu {
+        display: none;
+    }
+
+    .mobile-menu-simple {
+        display: none;
+    }
+
+    /* Mostrar el menú desplegable solo en móviles */
+    .mobile-menu {
+        display: block;
+        width: 50%;
+        padding: 10px;
+        font-size: 16px;
+        color: #ffffff; /* Color de texto */
+        border: 1px solid #555;
+        border-radius: 5px;
+        appearance: none; /* Oculta el estilo predeterminado en algunos navegadores */
+    }
+
+}
+
+/* ---------- CONTENIDO ---------- */
+.content {
+    padding: 20px;
+    text-align: center;
+    color: white;
+    background: none; /* sin gradient aquí */
+}
+
+.content-dashboard {
+    padding: 20px;
+    text-align: center;
+    color: white;
+    background: none; /* sin gradient aquí */
+    display: flex;
+    gap: 20px;
+}
+
+
+/* ---------- MOBILE ---------- */
+@media (max-width: 768px) {
+
+    .topbar {
+        height: 60px;
+        padding: 0 12px;
+    }
+
+
+    .box {
+        padding: 18px;
+        border-radius: 6px;
+    }
+
+    .no-mobile{
+        display: none;
+    }
+}
+
+/* Contenedor de la tarjeta */
+.card {
+    background-color: white;
+    width: calc(20% - 40px); /* Ancho de las tarjetas, ajusta según el número de columnas */
+    height: 250px;
+    margin: 10px; /* Espaciado entre tarjetas */
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    overflow: hidden;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+}
+
+.card-review {
+    background-color: white;
+    width: calc(20% - 40px); /* Ancho de las tarjetas, ajusta según el número de columnas */
+    height: 250px;
+    margin: 10px; /* Espaciado entre tarjetas */
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    overflow: hidden;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+}
+
+.card-checkpoint {
+    background-color: white;
+    width: calc(20% - 40px); /* Ancho de las tarjetas, ajusta según el número de columnas */
+    height: 250px;
+    margin: 10px; /* Espaciado entre tarjetas */
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    overflow: hidden;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+}
+
+.card-admin {
+    background-color: white;
+    width: calc(20% - 40px); /* Ancho de las tarjetas, ajusta según el número de columnas */
+    height: 80px;
+    margin: 10px; /* Espaciado entre tarjetas */
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    text-align: center;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+}
+
+.deck-status-wip {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+
+  background: rgba(9, 99, 219, 0.75);
+  color: #fff;
+
+  padding: 4px 10px;
+  border-radius: 3px; /* redondeado tipo pill */
+  font-size: 0.75rem;
+  font-weight: 600;
+
+  z-index: 2;
+  pointer-events: none; /* no interfiere con clicks */
+}
+
+.deck-status-4fun {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+
+  background: rgba(255,69,0, 0.75);
+  color: #fff;
+
+  padding: 4px 10px;
+  border-radius: 3px; /* redondeado tipo pill */
+  font-size: 0.75rem;
+  font-weight: 600;
+
+  z-index: 2;
+  pointer-events: none; /* no interfiere con clicks */
+}
+
+.deck-status-stable {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+
+  background: rgba(0, 255, 0, 0.75);
+  color: #fff;
+
+  padding: 4px 10px;
+  border-radius: 3px; /* redondeado tipo pill */
+  font-size: 0.75rem;
+  font-weight: 600;
+
+  z-index: 2;
+  pointer-events: none; /* no interfiere con clicks */
+}
+
+.deck-status-stable-grey {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+
+  background: rgba(100, 100, 100, 0.85);
+  color: #fff;
+
+  padding: 4px 10px;
+  border-radius: 3px; /* redondeado tipo pill */
+  font-size: 0.75rem;
+  font-weight: 600;
+
+  z-index: 2;
+  pointer-events: none; /* no interfiere con clicks */
+}
+
+.deck-status-wip-deck {
+  background: rgba(9, 99, 219, 0.75);
+  color: #fff;
+
+  padding: 4px 10px;
+  border-radius: 3px; /* redondeado tipo pill */
+  font-size: 0.75rem;
+  font-weight: 600;
+
+  z-index: 2;
+  pointer-events: none; /* no interfiere con clicks */
+}
+
+.deck-status-4fun-deck {
+  background: rgba(255,69,0, 0.75);
+  color: #fff;
+
+  padding: 4px 10px;
+  border-radius: 3px; /* redondeado tipo pill */
+  font-size: 0.75rem;
+  font-weight: 600;
+
+  z-index: 2;
+  pointer-events: none; /* no interfiere con clicks */
+}
+
+.deck-status-stable-deck {
+
+  background: rgba(0, 255, 0, 0.75);
+  color: #fff;
+
+  padding: 4px 10px;
+  border-radius: 3px; /* redondeado tipo pill */
+  font-size: 0.75rem;
+  font-weight: 600;
+
+  z-index: 2;
+  pointer-events: none; /* no interfiere con clicks */
+}
+
+.deck-tag {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+
+  background: rgba(100, 100, 100, 0.85);
+  color: #fff;
+
+  padding: 4px 10px;
+  border-radius: 3px; /* redondeado tipo pill */
+  font-size: 0.75rem;
+  font-weight: 600;
+
+  z-index: 2;
+  pointer-events: none; /* no interfiere con clicks */
+}
+
+/* Contenedor de la tarjeta */
+.run-cards {
+    background-color: white;
+    width: calc(20% - 40px); /* Ancho de las tarjetas, ajusta según el número de columnas */
+    height: 250px;
+    margin: 10px; /* Espaciado entre tarjetas */
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    overflow: hidden;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    display: inline-block;
+}
+
+@media (max-width: 768px) {
+    .card  {
+        width: calc(50% - 40px); /* Dos tarjetas por fila en pantallas más pequeñas */
+        height: 300px; /* Dos tarjetas por fila en pantallas más pequeñas */
+    }
+}
+
+/* Efecto hover */
+.card:hover {
+    transform: scale(1.05); /* Aumenta ligeramente el tamaño al pasar el ratón */
+}
+
+/* Imagen de la tarjeta */
+.card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover; / Mantiene proporción y recorta si es necesario */
+}
+
+/* Contenido de la tarjeta */
+.card .info {
+    padding: 15px;
+}
+
+.card .info h3 {
+    margin: 10px 0 5px;
+    font-size: 18px;
+    color: #333;
+}
+
+.card .info p {
+    margin: 0;
+    color: #777;
+    font-size: 14px;
+}
+
+.card {
+    text-decoration: none;
+}
+
+@media (max-width: 768px) {
+    .card  {
+        width: calc(50% - 40px); /* Dos tarjetas por fila en pantallas más pequeñas */
+        height: 300px; /* Dos tarjetas por fila en pantallas más pequeñas */
+    }
+}
+
+/* Efecto hover */
+.card-checkpoint:hover {
+    transform: scale(1.05); /* Aumenta ligeramente el tamaño al pasar el ratón */
+}
+
+/* Imagen de la tarjeta */
+.card-checkpoint img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover; / Mantiene proporción y recorta si es necesario */
+}
+
+/* Contenido de la tarjeta */
+.card-checkpoint .info {
+    padding: 15px;
+}
+
+.card-checkpoint .info h3 {
+    margin: 10px 0 5px;
+    font-size: 18px;
+    color: #333;
+}
+
+.card-checkpoint .info p {
+    margin: 0;
+    color: #777;
+    font-size: 14px;
+}
+
+.card-checkpoint {
+    text-decoration: none;
+}
+
+@media (max-width: 768px) {
+    .card-review  {
+        width: calc(50% - 40px); /* Dos tarjetas por fila en pantallas más pequeñas */
+        height: 300px; /* Dos tarjetas por fila en pantallas más pequeñas */
+    }
+}
+
+/* Efecto hover */
+.card-review:hover {
+    transform: scale(1.05); /* Aumenta ligeramente el tamaño al pasar el ratón */
+}
+
+/* Imagen de la tarjeta */
+.card-review img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover; / Mantiene proporción y recorta si es necesario */
+}
+
+/* Contenido de la tarjeta */
+.card-review .info {
+    padding: 15px;
+}
+
+.card-review .info h3 {
+    margin: 10px 0 5px;
+    font-size: 18px;
+    color: #333;
+}
+
+.card-review .info p {
+    margin: 0;
+    color: #777;
+    font-size: 14px;
+}
+
+.card-review {
+    text-decoration: none;
+}
+
+
+/* Imagen de la tarjeta */
+.run-cards img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover; / Mantiene proporción y recorta si es necesario */
+}
+
+/* Contenido de la tarjeta */
+.run-cards .info {
+    padding: 15px;
+}
+
+.run-cards .info h3 {
+    margin: 10px 0 5px;
+    font-size: 18px;
+    color: #333;
+}
+
+.run-cards .info p {
+    margin: 0;
+    color: #777;
+    font-size: 14px;
+}
+
+.run-cards {
+    text-decoration: none;
+}
+
+/* Efecto hover */
+.run-cards:hover {
+    transform: scale(1.05); /* Aumenta ligeramente el tamaño al pasar el ratón */
+}
+
+@media (max-width: 768px) {
+    .run-cards  {
+        width: calc(50% - 40px); /* Dos tarjetas por fila en pantallas más pequeñas */
+    }
+}
+
+.card-actions {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: flex;
+    gap: 8px;
+}
+
+.card-actions button{
+    background: none;
+    margin-top: 0px;
+    padding: 2px;
+}
+
+.card-actions span {
+    cursor: pointer;
+    font-size: 18px;
+    opacity: 0.7;
+    transition: opacity 0.2s, transform 0.2s;
+}
+
+.card-actions span:hover {
+    opacity: 1;
+    transform: scale(1.15);
+}
+
+/* Contenedor de la tarjeta */
+.cards-news {
+    background-color: white;
+    width: calc(20% - 40px); /* Ancho de las tarjetas, ajusta según el número de columnas */
+    height: 100px;
+    margin: 10px; /* Espaciado entre tarjetas */
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    overflow: hidden;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    display: inline-block;
+}
+
+@media (max-width: 768px) {
+    .cards-news  {
+        width: calc(50% - 40px); /* Dos tarjetas por fila en pantallas más pequeñas */
+        height: 150px;
+    }
+}
+
+/* Efecto hover */
+.cards-news:hover {
+    transform: scale(1.05); /* Aumenta ligeramente el tamaño al pasar el ratón */
+}
+
+/* Imagen de la tarjeta */
+.cards-news img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover; / Mantiene proporción y recorta si es necesario */
+}
+
+/* Contenido de la tarjeta */
+.cards-news .info {
+    padding: 15px;
+}
+
+.cards-news .info h3 {
+    margin: 10px 0 5px;
+    font-size: 18px;
+    color: #333;
+}
+
+.cards-news .info p {
+    margin: 0;
+    color: #777;
+    font-size: 14px;
+}
+
+.cards-news {
+    text-decoration: none;
+}
+
+/* Contenedor de la tarjeta */
+.cards-news-comments {
+    background-color: white;
+    width: calc(20% - 40px); /* Ancho de las tarjetas, ajusta según el número de columnas */
+    height: 100px;
+    margin: 10px; /* Espaciado entre tarjetas */
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    overflow: hidden;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    display: inline-block;
+}
+
+@media (max-width: 768px) {
+    .cards-news-comments  {
+        width: calc(50% - 40px); /* Dos tarjetas por fila en pantallas más pequeñas */
+        height: 150px;
+    }
+}
+
+/* Efecto hover */
+.cards-news-comments:hover {
+    transform: scale(1.05); /* Aumenta ligeramente el tamaño al pasar el ratón */
+}
+
+/* Imagen de la tarjeta */
+.cards-news-comments img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover; / Mantiene proporción y recorta si es necesario */
+}
+
+/* Contenido de la tarjeta */
+.cards-news-comments .info {
+    padding: 15px;
+}
+
+.cards-news-comments .info h3 {
+    margin: 10px 0 5px;
+    font-size: 18px;
+    color: #333;
+}
+
+.cards-news-comments .info p {
+    margin: 0;
+    color: #777;
+    font-size: 14px;
+}
+
+.cards-news-comments {
+    text-decoration: none;
+}
+
+.form-container {
+    width: 90%;
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 25px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(6px);
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(255,255,255,0.08);
+}
+
+.form-container h2 {
+    text-align: center;
+    color: white;
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    color: #cfd8e3;
+    font-size: 0.9rem;
+    margin-top: 12px;
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    padding: 10px 12px;
+    margin-top: 5px;
+    border: 1px solid #3a4a61;
+    border-radius: 8px;
+    background: rgba(0,0,0,0.4);
+    color: white;
+    font-size: 1rem;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: #4ea3ff;
+    box-shadow: 0 0 6px rgba(78,163,255,0.5);
+}
+
+button {
+    width: 100%;
+    margin-top: 20px;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: #4ea3ff;
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s ease-in-out;
+}
+
+button:hover {
+    background: #75bfff;
+}
+
+/* CONTENEDOR GENERAL */
+.deck-view {
+    width: 95%;
+    max-width: 970px;
+    margin: 30px auto;
+    padding: 20px;
+    background: rgba(255,255,255,0.04);
+    backdrop-filter: blur(6px);
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(255,255,255,0.05);
+    color: white;
+}
+
+/* FILA SUPERIOR */
+.deck-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap; /* para responsive */
+}
+
+/* IMAGEN PRINCIPAL DEL MAZO */
+.deck-image {
+    width: 140px;
+    height: 140px;
+    border-radius: 12px;
+    object-fit: cover;
+    box-shadow: 0 0 10px rgba(0,0,0,0.6);
+}
+
+/* INFO */
+.deck-info p {
+    margin: 5px 0;
+    color: #d0d8e4;
+}
+
+.deck-title {
+    margin: 0 0 10px 0;
+    color: white;
+}
+
+/* DECK LIST */
+.deck-list {
+    margin-top: 25px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+/* CADA CARTA */
+.card-slot {
+    width: 141px;
+    position: relative;
+}
+
+.card-slot img {
+    width: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.7);
+}
+
+/* CANTIDAD EN ESQUINA */
+.card-qty {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    background: rgba(0,0,0,0.75);
+    color: white;
+    font-size: 0.9rem;
+    padding: 3px 7px;
+    border-radius: 6px;
+    font-weight: bold;
+}
+
+.comments-section {
+    width: 95%;                   /* igual que deck */
+    max-width: 970px;            /* igual que deck */
+    margin: 30px auto;            /* centrado */
+    padding: 20px;
+
+    background: rgba(255,255,255,0.04);
+    border-radius: 12px;
+    backdrop-filter: blur(6px);
+    box-shadow: 0 0 15px rgba(255,255,255,0.05);
+    color: white;
+}
+
+.comments-section h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: white;
+}
+
+/* LISTA DE COMENTARIOS */
+.comments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin-bottom: 25px;
+}
+
+.comment {
+    background: rgba(0,0,0,0.35);
+    border-radius: 10px;
+    padding: 15px;
+    color: white;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.comment-user {
+    font-weight: bold;
+    color: #4ea3ff;
+}
+
+.comment-date {
+    font-size: 0.85rem;
+    color: #cfd8e3;
+}
+
+.comment-body {
+    font-size: 0.95rem;
+    line-height: 1.4;
+    text-align: left;
+}
+
+/* FORMULARIO */
+.comment-form label {
+    display: block;
+    color: #cfd8e3;
+    margin-bottom: 6px;
+}
+
+.comment-form textarea {
+    width: 100%;
+    padding: 12px;
+    resize: vertical;
+    border: 1px solid #3a4a61;
+    border-radius: 8px;
+    background: rgba(0,0,0,0.4);
+    color: white;
+    margin-bottom: 12px;
+}
+
+.comment-form textarea:focus {
+    outline: none;
+    border-color: #4ea3ff;
+    box-shadow: 0 0 6px rgba(78,163,255,0.5);
+}
+
+.comment-form button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: #4ea3ff;
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s ease-in-out;
+}
+
+.comment-form button:hover {
+    background: #75bfff;
+}
+
+.deck-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+
+.version-select {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    width: 200px;
+}
+
+/* Botones acción */
+.btn-action {
+    padding: 6px 12px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.15);
+    color: white;
+    text-decoration: none;
+    font-size: 0.9rem;
+    border: 1px solid rgba(255,255,255,0.3);
+    transition: 0.2s;
+}
+
+.btn-action:hover {
+    background: rgba(255,255,255,0.25);
+    border-color: white;
+}
+
+/* Responsive: acciones en columna para pantallas pequeñas */
+@media (max-width: 768px) {
+    .deck-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .deck-actions {
+        width: 100%;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+}
+
+
+/* Modal general */
+.modal {
+    display: none; /* Oculto por defecto */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.8); /* Fondo oscuro */
+    justify-content: center;
+    align-items: center;
+}
+
+/* Imagen dentro del modal */
+.modal-content {
+    max-width: 80%;
+    max-height: 80%;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.7);
+    display: block;
+    margin: auto;
+    cursor: pointer; /* Para indicar que se puede cerrar pulsando */
+}
+
+/* Botón cerrar */
+.close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    color: white;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.close:hover {
+    color: #bbb;
+}
+
+/* Opcional: hacer que las miniaturas cambien de cursor */
+.card-img {
+    cursor: pointer;
+}
+
+
+.title-box-decks img{
+    height: 32px;
+    width: 32px;
+}
+
+.title-box-decks h3 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-align: center;
+}
+
+
+.round-card {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px;
+    width: calc(20% - 40px); /* Ancho de las tarjetas, ajusta según el número de columnas */
+    margin: 50px; /* Espaciado entre tarjetas */
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    overflow: hidden;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+}
+
+.round-card-youtube {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px;
+    width: calc(15% - 20px); /* Ancho de las tarjetas, ajusta según el número de columnas */
+    margin: 20px; /* Espaciado entre tarjetas */
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    overflow: hidden;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+}
+
+.round-card-event {
+    width: 40%; /* Ancho de las tarjetas, ajusta según el número de columnas */
+}
+
+/* Header más compacto */
+.round-header {
+    font-weight: bold;
+    font-size: 1rem;          /* 🔹 Reducido */
+    margin-bottom: 20px;       /* 🔹 Reducido */
+    margin-top: 20px;
+}
+
+.round-header-youtube {
+    font-weight: bold;
+    font-size: 1.5rem;          /* 🔹 Reducido */
+    margin-bottom: 20px;       /* 🔹 Reducido */
+    margin-top: 20px;
+}
+
+.round-number {
+    color: #ffd966;
+}
+
+.round-result {
+    color: #a7ffa1;
+}
+
+/* Cuerpo sin mucho espaciado */
+.round-body {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;                 /* 🔹 Reducido */
+    margin-bottom: 20px;       /* 🔹 Reducido */
+    margin-top: 20px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.round-body-youtube {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;                 /* 🔹 Reducido */
+    margin-bottom: 20px;       /* 🔹 Reducido */
+    margin-top: 20px;
+    margin-left: 20px;
+    margin-right: 20px;
+    font-size: 1.4rem;
+}
+
+.round-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.round-row-youtube {
+    margin-bottom: 10px;
+}
+
+.label {
+    font-weight: 600;
+    font-size: 0.85rem;       /* 🔹 Reducido */
+}
+
+.value {
+    font-size: 0.85rem;       /* 🔹 Reducido */
+    text-align: right;
+}
+
+.value-youtube {
+    font-size: 1.75rem;       /* 🔹 Reducido */
+    text-align: right;
+}
+
+/* Iconos más pequeños */
+.ink-icons img {
+    width: 20px;              /* 🔹 Reducido de 26px */
+    height: 20px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.25);
+}
+
+/* Iconos más pequeños */
+.ink-icons-youtube img {
+    width: 50px;              /* 🔹 Reducido de 26px */
+    height: 50px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.25);
+}
+
+/* Notas muy compactas */
+.round-notes p {
+    margin: 2px 0 0;
+    font-size: 0.8rem;        /* 🔹 Reducido */
+    opacity: 0.85;
+}
+
+.round-form {
+    padding: 12px;
+}
+
+/* Compacto en móviles también */
+@media (max-width: 768px) {
+    .round-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+    }
+
+    .value {
+        text-align: left;
+    }
+}
+
+@media (max-width: 768px) {
+    .round-card {
+        width: 90%;
+        margin: 15px auto;  /* Centrado y más pequeño */
+        display: block;     /* Evita problemas con inline-block */
+    }
+}
+
+
+.hidden-deck-info{
+    display: none;
+}
+
+.statistics-section{
+    width: 95%;
+    max-width: 970px;
+    margin: 30px auto;
+    padding: 20px;
+    background: rgba(255,255,255,0.04);
+    backdrop-filter: blur(6px);
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(255,255,255,0.05);
+    color: white;
+}
+
+.statistics-section h2{
+    margin-bottom: 25px;
+}
+.statistics-section h3{
+    margin-bottom: 25px;
+}
+/* CONTENEDORES DE FILTROS */
+.filters-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.filters-container-lab {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 25px;
+    margin-top: 25px;
+}
+
+.filter-block {
+    background: rgba(255,255,255,0.10);
+    border: 1px solid rgba(255,255,255,0.18);
+    padding: 15px;
+    border-radius: 12px;
+    flex: 1 1 260px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+}
+
+/* CHECKBOX COMO CARDS */
+.filter-list label {
+    background: rgba(255,255,255,0.10);
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 8px 10px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.filter-list-lab{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.filter-list-lab label {
+    background: rgba(255,255,255,0.10);
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 8px 10px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+    width: auto;
+}
+
+.filter-list label:hover {
+    background: rgba(255,255,255,0.20);
+}
+
+/* CHECKBOX COMO CARDS */
+.filter-list-decks {
+    display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px 16px; /* espacio entre elementos */
+}
+
+.filter-list-decks label {
+    background: rgba(255,255,255,0.10);
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 8px 10px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.filter-list-decks label:hover {
+    background: rgba(255,255,255,0.20);
+}
+
+.non-top {
+    margin-top: 0px;
+}
+
+
+/* RESUMEN COMO TARJETAS */
+.stats-block {
+    margin-bottom: 30px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 15px;
+}
+
+.summary-card {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.18);
+    padding: 15px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+}
+
+.summary-card h4 {
+    margin: 0 0 8px 0;
+    font-size: 17px;
+}
+
+/* TARJETAS DE COMBINACIÓN DE TINTAS */
+.ink-card {
+    background: rgba(255,255,255,0.14);
+    border: 1px solid rgba(255,255,255,0.22);
+    padding: 15px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.22);
+}
+
+.ink-card h4 {
+    margin: 0 0 10px 0;
+    font-size: 17px;
+}
+
+.hr-data-decks {
+ border-color: rgba(255,255,255,0.2); margin: 10px 0;
+}
+
+.white{
+    color: #F0FFFF
+}
+
+.left {
+    display: block;      /* clave */
+    text-align: left;
+}
+.right {
+    display: block;      /* clave */
+    text-align: right;
+}
+
+.menu-toggle {
+    display: none;
+}
+.eye-btn {
+    margin-top: 3px;
+    padding: 2px;
+    font-size: 20px;
+    cursor: pointer;
+    opacity: 0.8;
+    position: absolute;
+    left: 8px;
+    display: flex;
+}
+.eye-btn:hover {
+    opacity: 1;
+}
+
+/* menú oculto */
+.menu-options {
+    display: none;
+    flex-direction: column;
+    border-radius: 8px;
+}
+
+/* mostrar menú cuando el checkbox está activado */
+.menu-toggle:checked + .eye-btn + .menu-options {
+    display: flex;
+}
+
+.eye-btn,
+.eye-btn:focus,
+.eye-btn:active {
+    outline: none;
+    box-shadow: none;
+}
+
+
+
+
+/************ LAB **************/
+.grid {
+display: grid;
+grid-template-columns: 2fr 1fr;
+gap: 20px;
+}
+
+/* ---- Cartas en la columna izquierda ---- */
+background: #ffffff;
+border-radius: 8px;
+padding: 4px;
+cursor: pointer;
+transition: 0.2s ease;
+border: 1px solid #ccc;
+display: flex;
+justify-content: center;
+}
+
+
+.card-item:hover {
+background: #e6e6e6;
+transform: scale(1.02);
+}
+
+
+.card-img {
+width: 100%;
+max-width: 150px;
+border-radius: 6px;
+}
+
+.card-img-guide {
+width: 100%;
+max-width: 125px;
+border-radius: 6px;
+}
+
+@media (max-width: 768px) {
+
+    .card-img-guide {
+        max-width: 60px;
+    }
+
+}
+
+#cardList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  max-height: 75vh;
+  overflow-y: auto;
+}
+
+/* Modal full screen overlay */
+#cardModal-lab {
+  display: none;
+  position: fixed;          /* ahora sí ocupa toda la pantalla */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  display: flex;
+}
+
+#cardModal-lab img.modal-content {
+  max-width: 80%;
+  max-height: 80%;
+  border-radius: 5px;
+}
+
+#cardModal-lab .close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: #fff;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+
+
+/* ---- Cartas dentro del deck ---- */
+.deck-row {
+position: relative;
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 10px;
+background: #223;
+border-radius: 8px;
+border: 1px solid #111;
+color: white;
+height: 30px;
+}
+
+
+.deck-title-lab {
+    font-size: 14px;
+    font-weight: bold;
+    margin-top: 3px;
+}
+
+
+.deck-controls {
+display: flex;
+align-items: center;
+gap: 5px;
+justify-content: center;
+}
+
+
+.deck-btn {
+margin-top: 0px;
+background: #445;
+color: white;
+border: none;
+padding: 4px 10px;
+border-radius: 4px;
+cursor: pointer;
+font-size: 16px;
+transition: 0.15s ease;
+}
+
+
+.deck-btn:hover {
+background: #667;
+}
+
+
+.deck-qty {
+font-size: 12px;
+font-weight: bold;
+}
+
+.deck-preview {
+  display: none; /* inicialmente oculta */
+  position: absolute;
+  left: 0;
+  width: 170px; /* ajusta según necesites */
+  border: 1px solid #ccc;
+  background: #fff;
+  z-index: 10;
+
+  transform: translateY(-50%);
+}
+
+.deck-row:hover .deck-preview {
+  display: block; /* se muestra al pasar el mouse */
+}
+
+.btn-lab {
+    width: 50%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.card-sapphire {
+    background: #3368bd
+}
+.card-emerald {
+    background: #458f32
+}
+.card-amber {
+    background: #c9a018
+}
+.card-amethyst {
+    background: #7a28a6
+}
+.card-steel {
+    background: #999999
+}
+.card-ruby {
+    background: #a10202
+}
+
+.card-img-ink{
+    height: 20px;
+
+}
+
+.ink_card_title{
+    display: flex;
+       gap: 10px;
+    padding: 8px;
+}
+/* ----- ESTADÍSTICAS DEL DECK ----- */
+#deckStats {
+    display: flex;
+    gap: 20px;
+    padding: 10px 0;
+    align-items: center;
+}
+
+.deck-stat {
+    display: flex;
+    align-items: center;
+    background: #223;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: 1px solid #111;
+    gap: 10px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.deck-stat-icon {
+    width: 28px;
+    height: 28px;
+}
+
+
+
+
+.cost-ink-container {
+  position: relative;        /* Permite posicionar elementos dentro */
+  display: inline-block;     /* Ajusta tamaño al contenido */
+}
+
+.cost-ink-container img {
+  width: 100%;
+}
+
+.cost-ink-p {
+  position: absolute;        /* Ubica el texto encima */
+  top: 45%;                  /* Centrado vertical */
+  left: 48%;                 /* Centrado horizontal */
+  transform: translate(-50%, -50%);
+  color: white;              /* Color del texto */
+  font-size: 12px;
+  font-weight: bold;
+  text-shadow: 2px 2px 5px black; /* Mejora la legibilidad */
+}
+
+/***** FOOTER ********/
+.container-policies {
+  display: flex; /* Los elementos hijos se organizan en fila */
+  flex-wrap: wrap; /* Permite que los elementos se envuelvan cuando no caben en la misma línea */
+  gap: 10px; /* Separación entre los elementos */
+}
+
+/* Estilo para los elementos dentro del contenedor */
+.container-policies .item {
+  flex: 1 1 100px; /* Los elementos pueden crecer y reducirse, pero el tamaño base será de 100px */
+  min-width: 100px; /* Evita que los elementos sean más pequeños que 100px */
+  padding: 20px; /* Espaciado interno */
+  text-align: center; /* Centra el texto dentro de los elementos */
+}
+
+/* Media query para pantallas pequeñas (móviles) */
+@media (max-width: 768px) {
+  .container-policies {
+    flex-direction: column; /* En pantallas más pequeñas, los elementos se apilan uno encima de otro */
+    align-items: center; /* Centra los elementos de manera horizontal */
+  }
+
+  .filter-list-decks {
+        display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 5px 16px; /* espacio entre elementos */
+    }
+}
+
+footer {
+        width: 100%;
+        background-color: #2a2a2a;
+        color: #999;
+        text-align: center;
+        padding: 10px 0;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        font-size: 14px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 20px;
+    }
+
+.height-chart-deck {
+    height: 100px !important;
+}
+
+.height-textarea {
+    height: 300px;
+    max-width: auto;
+    resize: vertical;
+
+}
+
+/****************** FILTROS DECKS ******************/
+.deck-filters {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap; /* por si no cabe en pantallas pequeñas */
+  gap: 10px;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap; /* permite que los botones salten de línea */
+  column-gap: 5px;
+  margin-left: 20px;
+}
+
+
+.filter-tag {
+  display: inline-flex;
+  align-items: center;
+
+  background: rgba(90, 90, 90, 0.85);
+  color: #fff;
+
+  border: 2px solid transparent;
+  border-radius: 5px;
+
+  padding: 2px 12px;
+  font-size: 1rem;
+
+  cursor: pointer;
+  white-space: nowrap;
+
+  width: auto;
+
+}
+
+.filter-tag.active {
+  border-color: #fff;
+}
+
+/********************* WARNING BOX *************/
+.warning-box {
+  display: flex;
+  align-items: flex-start;
+  background-color: #fff3cd; /* amarillo claro tipo advertencia */
+  border: 1px solid #ffeeba; /* borde amarillo más oscuro */
+  color: #856404;             /* texto oscuro */
+  padding: 12px 16px;
+  border-radius: 5px;
+  margin: 10px 0;
+  font-family: sans-serif;
+  gap: 10px; /* espacio entre icono y texto */
+}
+
+.warning-icon {
+  font-size: 1.5rem; /* tamaño del icono */
+  line-height: 1;
+}
+
+.warning-text {
+  margin: 0; /* elimina margen por defecto del p */
+}
+
+
+.conjunto {
+    display: flex;
+    flex-direction: column; /* coloca textarea debajo de la fila de selects y botón */
+    gap: 8px;               /* separación vertical entre fila y textarea */
+    margin-bottom: 12px;    /* separación entre conjuntos */
+    padding: 8px;
+}
+
+.conjunto .fila {
+    display: flex;
+    align-items: center;
+    gap: 10px;          /* espacio entre selects y botón */
+}
+
+/* Selects ocupan 45% cada uno */
+.conjunto select {
+    flex: 0 0 40%;
+    padding: 5px;
+}
+
+/* Botón ocupa 10% a la derecha */
+.conjunto button.eliminar {
+    flex: 0 0 10%;
+    padding: 5px;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.conjunto button.eliminar:hover {
+    background-color: #c0392b;
+}
+
+/*********************************** MULLIGAN ***********************/
+
+.hand {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+    flex-wrap: wrap; /* 👈 permite varias filas */
+}
+
+.card-img-mulligan {
+    width: 100%;
+    max-width: 150px;
+    border-radius: 6px;
+}
+
+.card-img-mulligan.selected {
+    border-color: red;
+    opacity: 0.4;
+}
+
+.mulligan-view {
+    max-width: 65%;
+    margin: 30px auto;
+    padding: 20px;
+    background: rgba(255,255,255,0.04);
+    backdrop-filter: blur(6px);
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(255,255,255,0.05);
+    color: white;
+}
+
+.pre-mulligan-view {
+    margin: 30px auto;
+}
+
+.card-img-pre-mulligan {
+    width: 100%;
+    max-width: 100px;
+    border-radius: 6px;
+}
+
+@media (max-width: 768px) {
+
+    .mulligan-view{
+        max-width: 100%;
+        margin: 0px; 0px;
+        padding: 20px;
+    }
+
+    .card-img-mulligan {
+        width: 30%;
+        border-radius: 6px;
+    }
+
+    .card-img-pre-mulligan {
+        width: 100%;
+        max-width: 65px;
+        border-radius: 6px;
+    }
+
+}
+
+/************* CALENDAR ******************/
+.calendar-container {
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 25px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(6px);
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(255,255,255,0.08);
+}
+
+.calendar-header {
+    display: grid;
+    grid-template-columns: 40px 1fr 40px;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.calendar-header h2{
+    margin-bottom: 0px;
+}
+
+.calendar-header button {
+    cursor: pointer;
+    margin-top: 0px;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+}
+
+.day-name {
+    font-weight: bold;
+    padding: 5px 0;
+}
+
+.day {
+    border: 1px solid #ddd;
+    height: 50px;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.day.other-month {
+    color: #aaa;
+}
+
+.day:hover {
+    background: #f0f0f0;
+}
+
+.day.today {
+    background: #dcefff;
+    font-weight: bold;
+}
+
+.events-panel {
+    text-align: center;
+}
+.day {
+    position: relative;
+}
+
+.day.has-events::after {
+    content: "";
+    width: 6px;
+    height: 6px;
+    background-color: #d32f2f;   /* rojo elegante */
+    border-radius: 50%;
+    position: absolute;
+    bottom: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.events-panel h3 {
+    text-align: center;
+}
+
+#eventsList {
+    list-style: none;
+    padding: 0;
+    text-align: center;
+}
+
+.width-team {
+    max-width: 150px;
+}
+
+.page-layout {
+    display: grid;
+    grid-template-columns: auto auto auto;
+    width: 100%;
+    align-items: start;
+}
+
+
+/* Sidebars */
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+
+    justify-content: center; /* centra verticalmente el contenido */
+    justify-self: right;    /* 👈 centra el sidebar horizontalmente */
+    margin-top: 100px;
+    width: 100x;
+}
+
+.middle {
+    justify-content: center; /* centra verticalmente el contenido */
+    justify-self: center;    /* 👈 centra el sidebar horizontalmente */
+}
+
+/* Opcional: ancho máximo de los laterales */
+.sidebar.left,
+.sidebar.right {
+    width: 100x;
+    margin-left: 300px;
+}
+
+.sidebar-center {
+    display: flex;
+    justify-content: center; /* centra horizontal */
+    align-items: center;     /* centra vertical (si hay altura) */
+    width: 100%;
+}
+
+#players-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #2a2a2a;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+#players-table th,
+#players-table td {
+    padding: 12px;
+    border-bottom: 1px solid #444;
+    text-align: left;
+}
+
+#players-table th {
+    background: #333;
+}
+
+#players-table tr:hover {
+    background: #3a3a3a;
+}
+
+#players-table a {
+    color: #6aa9ff;
+    text-decoration: none;
+}
+

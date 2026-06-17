@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+{% include "template_head.html" %}
+<body>
+
+        {% include "template_header.html" %}
+        <!-- CONTENIDO PRINCIPAL -->
+        <div class="content-dashboard"><h3>Partidas</h3></div>
+
+                <a href="/new-game" class="card">
+                    <img src="{{ url_for('static', filename='img/logo.webp') }}" alt="Imagen">
+                    <div class="info">
+                        <h3>Crear Nueva Partida</h3>
+                        <p></p>
+                    </div>
+                </a>
+
+            {% for game in all_games %}
+                <div class="card" game-id="{{game.id_game}}">
+                    <span class="deck-tag">{{game.user_name_opponent}}</span>
+                    <span class="deck-status-stable-grey">{{game.user_name_main}}</span>
+                    <img src="{{ url_for('static', filename='img/table.webp') }}" alt="Imagen">
+                    <div class="info">
+                        <div class="title-box-decks">
+                            <h3>
+                                {{game.game_name}}
+                            </h3>
+                        </div>
+                        <p>{{game.seed}}</p>
+                    </div>
+                </div>
+            {% endfor %}
+
+        </div>
+        <div class="content-dashboard"><h3>Review Games</h3></div>
+
+
+            {% for review in all_reviews %}
+                <div class="card-review" review-id="{{review.id_game}}">
+                    <span class="deck-tag">{{review.user_name_opponent}}</span>
+                    <span class="deck-status-stable-grey">{{review.user_name_main}}</span>
+                    <img src="{{ url_for('static', filename='img/table.webp') }}" alt="Imagen">
+                    <div class="info">
+                        <div class="title-box-decks">
+                            <h3>
+                                {{review.game_name}}
+                            </h3>
+                        </div>
+                        <p>{{review.seed}}</p>
+                    </div>
+                </div>
+            {% endfor %}
+
+        <div class="content-dashboard"><h3>Checkpoints</h3></div>
+
+            {% for checkpoint in all_checkpoints %}
+                <div class="card-checkpoint" checkpoint-id="{{checkpoint.id_game}}" since-scn="{{checkpoint.scn}}">
+                    <span class="deck-tag">{{checkpoint.user_name_opponent}}</span>
+                    <span class="deck-status-stable-grey">{{checkpoint.user_name_main}}</span>
+                    <img src="{{ url_for('static', filename='img/checkpoint.webp') }}" alt="Imagen">
+                    <div class="info">
+                        <div class="title-box-decks">
+                            <h3>
+                                {{checkpoint.game_name}}
+                            </h3>
+                        </div>
+                        <p>{{checkpoint.scn}}</p>
+                    </div>
+                </div>
+            {% endfor %}
+
+</main>
+<script src="{{ url_for('static', filename='js/tavern.js') }}"></script>
+</body>
+{% include "footer.html" %}
+</html>

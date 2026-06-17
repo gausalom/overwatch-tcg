@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+{% include "template_head.html" %}
+<body>
+
+        {% include "template_header.html" %}
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="content">
+
+            <div class="form-container">
+            <h2>Editar Mazo</h2>
+
+            <form action="/save-deck/{{deck.id_deck}}" method="POST">
+
+                <!-- Nombre -->
+                <label for="nombre">Nombre del mazo</label>
+                <input type="text" id="nombre" name="nombre" value="{{deck.deck_name}}" required>
+
+                <!-- Set -->
+                <label for="set">Set</label>
+                <input type="number" id="set" name="set" min="1" value="{{deck.set_deck}}" disabled required>
+
+                <!-- Imagen -->
+                <label for="imagen">Imagen del mazo</label>
+                <select id="imagen" name="imagen" required>
+                    <option value="">Selecciona una imagen</option>
+                    <option value="1" {% if deck.image=="1" %}selected{% endif %}>Trio</option>
+
+                </select>
+
+                <!-- Estado -->
+                <label for="status">Estado</label>
+                <select id="status" name="status" required>
+                    <option value="">Selecciona un estado</option>
+                    <option value="WIP" {% if deck.status=="WIP" %}selected{% endif %}>WIP</option>
+                    <option value="Stable" {% if deck.status=="Stable" %}selected{% endif %}>Stable</option>
+                    <option value="4Fun" {% if deck.status=="4Fun" %}selected{% endif %}>4Fun</option>
+                    <option value="Public" {% if deck.status=="Public" %}selected{% endif %}>Public</option>
+                </select>
+
+                <label for="faction">Facción</label>
+                <select id="faction" name="faction" disabled required>
+                    <option value="">Selecciona una Facción</option>
+                    <option value="1" {% if deck.faction==1 %}selected{% endif %}>Vanguard</option>
+                    <option value="2" {% if deck.faction==2 %}selected{% endif %}>Dominion</option>
+                    <option value="3" {% if deck.faction==3 %}selected{% endif %}>Omnic</option>
+                    <option value="4" {% if deck.faction==4 %}selected{% endif %}>Outlander</option>
+                </select>
+
+
+                <!-- Lista -->
+                <label for="lista">Lista del mazo</label>
+                <textarea id="lista" name="lista" rows="10" placeholder="Escribe aquí la lista..."></textarea>
+
+                <button type="submit">Guardar</button>
+            </form>
+            <br>
+            <br>
+            <br>
+            <br>
+                <div class="warning-box">
+              <span class="warning-icon">⚠️</span>
+              <p class="warning-text">
+                ¡Atención! Esta acción no se puede deshacer.
+              </p>
+            </div>
+            <form action="/delete-deck/{{deck.id_deck}}" method="POST">
+                <button type="submit">Borrar</button>
+            </form>
+        </div>
+
+
+
+        </main>
+
+</body>
+{% include "footer.html" %}
+</html>

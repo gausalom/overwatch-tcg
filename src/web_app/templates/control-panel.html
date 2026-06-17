@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+{% include "template_head.html" %}
+<body>
+
+        {% include "template_header.html" %}
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="content">
+            <h3>Usuarios</h3>
+
+            {% for user in all_users %}
+            <div class="card card-admin" user-id="{{user.id_player}}" user-name="{{ user.player_name }}" >
+                <div class="info">
+                    <div class="title-box-decks">
+                        <h3>
+                            {{user.player_name}}
+                        </h3>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+
+        </main>
+        <main class="content">
+
+        <h3>Funcionalidades</h3>
+            <a href="/decks-youtube" class="card card-admin">
+                <div class="info">
+                    <h3>Ver Mazos para Youtube</h3>
+                    <p></p>
+                </div>
+            </a>
+            <a href="/events-youtube" class="card card-admin">
+                <div class="info">
+                    <h3>Ver Eventos para Youtube</h3>
+                    <p></p>
+                </div>
+            </a>
+        </main>
+
+    <script src="{{ url_for('static', filename='js/control-panel.js') }}"></script>
+</body>
+{% include "footer.html" %}
+</html>

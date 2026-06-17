@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+{% include "template_head.html" %}
+<body>
+
+        {% include "template_header.html" %}
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="content">
+            <h2>Últimos Comentarios</h2>
+            {% for comment in all_comments %}
+            <div class="cards-news-comments" comment-id="{{comment.id_deck}}">
+                <div class="info">
+                    <div class="title-box-decks">
+                        <h3>
+                            {{comment.player_name}}
+                        </h3>
+                    </div>
+                    <p>[{{comment.date_created}}]</p>
+                    <p> {{comment.deck_name}}</p>
+                </div>
+            </div>
+            {% endfor %}
+            <h2>Últimos Enfrentamientos</h2>
+            {% for result in all_results %}
+            <div class="cards-news" comment-id="{{result.id_tournament}}/{{result.id_player}}">
+                <div class="info">
+                    <div class="title-box-decks">
+                        <h3>
+                            {{result.player_name}} {{result.result_win}}-{{result.result_loose}}
+                        </h3>
+                    </div>
+                    <p>[{{result.date_created}}]</p>
+                    <p> {{result.tournament_name}}</p>
+                </div>
+            </div>
+            {% endfor %}
+
+            <h2>Últimos Mazos Actualizados</h2>
+            {% for result in all_last_decks %}
+            <div class="card" comment-id="{{result.id_deck}}">
+                <span class="deck-tag">Versión {{result.version}}</span>
+                <img src="{{ url_for('static', filename='img/decks/'+result.image+'.webp') }}" alt="Imagen">
+                <div class="info">
+                    <div class="title-box-decks">
+                        <h3>
+                            <img src="{{ url_for('static', filename='img/ink/'+result.first_ink|string+'.webp') }}" alt="Imagen">
+                            {{result.deck_name}}
+                            <img src="{{ url_for('static', filename='img/ink/'+result.second_ink|string+'.webp') }}" alt="Imagen">
+                        </h3>
+                    </div>
+                    <p>{{result.date_created}}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </main>
+
+    <script src="{{ url_for('static', filename='js/home.js') }}"></script>
+</body>
+{% include "footer.html" %}
+</html>

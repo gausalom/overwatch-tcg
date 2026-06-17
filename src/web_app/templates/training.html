@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+{% include "template_head.html" %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/training.css') }}?v=1">
+<body>
+
+        {% include "template_header.html" %}
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="content">
+            <div id="game-data" data-cards="{% for card in all_cards%}{{card}}{%if not loop.last%},{% endif %}{%endfor%}"></div>
+
+            <div id="table">
+                <div id="top-area">
+                    <div id="card-preview">
+
+
+                    </div>
+                    <div>
+                    <div id="play-area" class="zone">
+                        <div class="cards-container"></div>
+                    </div>
+
+                    <div id="ink-area" class="zone">
+                        <div class="cards-container"></div>
+                    </div>
+                    </div>
+                </div>
+
+                <div id="bottom-section">
+
+                    <div id="hand-area" class="zone">
+                        <div class="cards-container"></div>
+                    </div>
+
+                    <div id="side-area-discard">
+
+                        <div id="discard-area">
+                            <div class="cards-container"></div>
+                        </div>
+
+                    </div>
+                    <div id="side-area">
+
+                        <div id="deck-area">
+                            <div class="cards-container"></div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Menú contextual -->
+            <div id="context-menu" class="menu-training"></div>
+            <div id="game-controls">
+                <button id="btn-reset">Resetear</button>
+                <button id="btn-draw">Robar</button>
+                <button id="btn-draw7">Robar 7</button>
+                <button id="btn-back">Volver atrás</button>
+            </div>
+        </main>
+
+    <script src="{{ url_for('static', filename='js/training.js') }}"></script>
+</body>
+{% include "footer.html" %}
+</html>

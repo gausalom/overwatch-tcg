@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+{% include "template_head.html" %}
+<body>
+
+        {% include "template_header.html" %}
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="content">
+            <div class="comments-section">
+                <a class="white left" href="/deck/{{deck.id_deck}}">Volver</a>
+                <form action="/guide-pdf/{{deck.id_deck}}" method="GET">
+                            <button id="guide" class="btn-action">📖 Descargar PDF</button>
+                        </form>
+                <br>
+                {% if is_preview and current_user.id == deck.id_player %}
+                <a class="white right" href="/guide/{{deck.id_deck}}">Editar</a><br>
+                {% elif not is_preview%}
+                <a class="white right" href="/guide/{{deck.id_deck}}?preview=True">Pre-Visualización</a><br>
+                {% endif %}
+                <h3>{{deck.deck_name}}</h3>
+                {% if is_preview %}
+
+                    {% if deck_guide is not none %}
+                        <div class="comments-list">
+                            {% if deck_guide.introduction is not none and deck_guide.introduction != "None" %}
+                            <div class="comment">
+                                <div class="comment-header">
+                                    <span class="comment-user">Introducción</span>
+                                    <span class="comment-date">{{deck_guide.date_created}}</span>
+                                </div>
+                                <div class="comment-body">
+                                    {{deck_guide.introduction | replace('\n', '<br>') | safe}}
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            {% if deck_guide.general_description is not none and deck_guide.general_description != "" %}
+                            <div class="comment">
+                                <div class="comment-header">
+                                    <span class="comment-user">General</span>
+                                </div>
+                                <div class="comment-body">
+                                    {{deck_guide.general_description | replace('\n', '<br>') | safe}}
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            {% if deck_guide.card_analysis is not none and deck_guide.card_analysis != "" %}
+                            <div class="comment">
+                                <div class="comment-header">
+                                    <span class="comment-user">Análisis de Cartas</span>
+                                </div>
+                                <div class="comment-body">
+                                    {{deck_guide.card_analysis | replace('\n', '<br>') | safe}}
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            {% if deck_guide.main_lines is not none and deck_guide.main_lines != "" %}
+                            <div class="comment">
+                                <div class="comment-header">
+                                    <span class="comment-user">Líneas Principales</span>
+                                </div>
+                                <div class="comment-body">
+                                    {{deck_guide.main_lines | replace('\n', '<br>') | safe}}
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            {% if deck_guide.mulligan is not none and deck_guide.mulligan != "" %}
+                            <div class="comment">
+                                <div class="comment-header">
+                                    <span class="comment-user">Mulligan</span>
+                                </div>
+                                <div class="comment-body">
+                                    {{deck_guide.mulligan | replace('\n', '<br>') | safe}}
+                                </div>
+                            </div>
+                            {% endif %}
+
+                        </div>
+                        <div class="comments-list">
+                            {% if matchups | length > 0 %}
+                            <h4>Matchups</h4>
+                            {% endif %}
+                            {% for mu in matchups %}
+                                <div class="comment">
+                                    <div class="comment-header">
+                                        <span class="comment-user">
+                                            {%if mu.first_ink == 1%}🟡{%endif%}
+                                            {%if mu.first_ink == 2%}🟣{%endif%}
+                                            {%if mu.first_ink == 3%}🟢{%endif%}
+                                            {%if mu.first_ink == 4%}🔴{%endif%}
+                                            {%if mu.first_ink == 5%}🔵{%endif%}
+                                            {%if mu.first_ink == 6%}⚪{%endif%}
+                                            {%if mu.second_ink == 1%}🟡{%endif%}
+                                            {%if mu.second_ink == 2%}🟣{%endif%}
+                                            {%if mu.second_ink == 3%}🟢{%endif%}
+                                            {%if mu.second_ink == 4%}🔴{%endif%}
+                                            {%if mu.second_ink == 5%}🔵{%endif%}
+                                            {%if mu.second_ink == 6%}⚪{%endif%}
+                                            {{mu.deck_name}}
+                                        </span>
+                                    </div>
+                                    <div class="comment-body">
+                                        {{mu.content | replace('\n', '<br>') | safe}}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="comments-list">
+                            <div class="comment">
+                                <div class="comment-body">
+                                    ¡Aquí <b>{{deck.player_name}}</b> no ha trabajado! Dile que se lo curre un poco anda.
+                                    {% if deck.status == 'Stable' %}
+                                    <br>
+                                    <br>
+                                    Y además lo marca como deck estable sin comentar nada...
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% elif not is_preview %}
+
+                    <!-- Introducción -->
+                    <form action="/save-guide/{{ deck.id_deck }}" method="POST" class="comment-form">
+                        <label>Última Actualización: {{deck_guide.date_created}}</label><br>
+                        <label for="introduction">Introducción</label>
+                        <textarea id="introduction" name="introduction" rows="15" placeholder="">{% if deck_guide.introduction is not none and deck_guide.introduction!=""%}{{deck_guide.introduction}}{% endif %}</textarea>
+
+                        <label for="general_description">General</label>
+                        <textarea id="general_description" name="general_description" rows="15" placeholder="">{% if deck_guide.general_description is not none and deck_guide.general_description!=""%}{{deck_guide.general_description}}{% endif %}</textarea>
+
+                        <label for="card_analysis">Análisis de Cartas</label>
+                        <textarea id="card_analysis" name="card_analysis" rows="15" placeholder="">{% if deck_guide.card_analysis is not none and deck_guide.card_analysis!=""%}{{deck_guide.card_analysis}}{% endif %}</textarea>
+
+                        <label for="main_lines">Líneas Principales</label>
+                        <textarea id="main_lines" name="main_lines" rows="15" placeholder="">{% if deck_guide.main_lines is not none and deck_guide.main_lines!=""%}{{deck_guide.main_lines}}{% endif %}</textarea>
+
+                        <label for="mulligan">Mulligan</label>
+                        <textarea id="mulligan" name="mulligan" rows="15" placeholder="">{% if deck_guide.mulligan is not none and deck_guide.mulligan!=""%}{{deck_guide.mulligan}}{% endif %}</textarea>
+
+                        <label for="mulligan">Matchups</label>
+                        <div id="conjuntos">
+                            {% for mu in matchups %}
+                                <div class="conjunto">
+                                    <div class="fila">
+                                        <select name="first_ink[]" required>
+                                            <option value="1" {% if mu.first_ink==1%}selected{% endif%}>Ámbar - Amarillo 🟡</option>
+                                            <option value="2" {% if mu.first_ink==2%}selected{% endif%}>Amatista - Lila 🟣</option>
+                                            <option value="3" {% if mu.first_ink==3%}selected{% endif%}>Esmeralda - Verde 🟢</option>
+                                            <option value="4" {% if mu.first_ink==4%}selected{% endif%}>Rubí - Rojo 🔴</option>
+                                            <option value="5" {% if mu.first_ink==5%}selected{% endif%}>Zafiro - Azul 🔵</option>
+                                            <option value="6" {% if mu.first_ink==6%}selected{% endif%}>Acero - Gris ⚪</option>
+                                        </select>
+                                        <select name="second_ink[]" required>
+                                            <option value="1" {% if mu.second_ink==1%}selected{% endif%}>Ámbar - Amarillo 🟡</option>
+                                            <option value="2" {% if mu.second_ink==2%}selected{% endif%}>Amatista - Lila 🟣</option>
+                                            <option value="3" {% if mu.second_ink==3%}selected{% endif%}>Esmeralda - Verde 🟢</option>
+                                            <option value="4" {% if mu.second_ink==4%}selected{% endif%}>Rubí - Rojo 🔴</option>
+                                            <option value="5" {% if mu.second_ink==5%}selected{% endif%}>Zafiro - Azul 🔵</option>
+                                            <option value="6" {% if mu.second_ink==6%}selected{% endif%}>Acero - Gris ⚪</option>
+                                        </select>
+                                        <button type="button" class="eliminar">Eliminar Matchup</button>
+                                    </div>
+                                    <input type="text" name="deck_name[]" value="{% if mu.deck_name is not none and mu.deck_name!=""%}{{mu.deck_name}}{% endif %}" required>
+                                    <textarea name="content[]" rows="15">{% if mu.content is not none and mu.content!=""%}{{mu.content}}{% endif %}</textarea>
+                                </div>
+
+                            {% endfor %}
+                        </div>
+                        <button type="button" id="agregar">Agregar Matchup</button>
+                        <button type="submit">Guardar</button>
+
+                    </form>
+                {% endif %}
+            </div>
+
+
+        </main>
+
+<script src="{{ url_for('static', filename='js/guide.js') }}"></script>
+</body>
+{% include "footer.html" %}
+</html>

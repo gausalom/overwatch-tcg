@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+{% include "template_head.html" %}
+<body>
+
+        {% include "template_header.html" %}
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="content">
+            <br>
+            <h3>{{event.tournament_name}}</h3>
+            <div class="content">
+                <div class="round-card round-form round-card-event">
+
+                    <h2 class="form-title">Nueva Ronda</h2>
+
+                    <form action="/add-round/{{event.id_tournament}}" method="POST" class="round-form-content">
+
+                        <div class="form-group">
+                            <label>Mi deck</label>
+                            <select name="my_deck" required>
+                                <option value="" selected>--</option>
+                                {% for deck in all_decks %}
+                                <option value="{{deck.id_deck}}">{{deck.deck_name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <div class="ink-selects">
+                                <label>Game 1</label>
+                                <select name="game_1">
+                                    <option value="" selected>--</option>
+                                    <option value="1">Victoria</option>
+                                    <option value="0">Derrota</option>
+                                </select>
+                                <label>Game 2</label>
+                                <select name="game_2">
+                                    <option value="" selected>--</option>
+                                    <option value="1">Victoria</option>
+                                    <option value="0">Derrota</option>
+                                </select>
+                                <label>Game 3</label>
+                                <select name="game_3">
+                                    <option value="" selected>--</option>
+                                    <option value="1">Victoria</option>
+                                    <option value="0">Derrota</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Tintas rival</label>
+                            <div class="ink-selects">
+                                <select name="enemy_faction" required>
+                                    <option value="1">Vanguard 🔵</option>
+                                    <option value="2">Dominion 🔴</option>
+                                    <option value="3">Omnic 🟡</option>
+                                    <option value="4">Outlander ⚪</option>
+                                </select>
+
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Inicio</label>
+                            <select name="starting">
+                                <option value="OTP">🚀 OTP</option>
+                                <option value="OTD">🛡️ OTD</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Ganó el dado?</label>
+                            <select name="won_dice">
+                                <option value="yes">🎲 Sí</option>
+                                <option value="no">❌ No</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Notas</label>
+                            <textarea class="height-textarea" name="notes" rows="3"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Repetición de la Partida</label>
+                            <input type="text" id="link" name="link" maxlength="200">
+                        </div>
+
+                        <button class="btn-submit" type="submit">Guardar Ronda</button>
+
+                    </form>
+                </div>
+            </div>
+            <br>
+            <h4>{{final_result}}</h4>
+            {% for round in results | reverse %}
+                {% set id_round_calc = (results|length-loop.index)+1 %}
+            <div class="round-card">
+
+                <input type="checkbox" id="menu-toggle-{{id_round_calc}}" class="menu-toggle">
+                <label for="menu-toggle-{{id_round_calc}}" class="eye-btn">👁️</label>
+                <div class="menu-options">
+                    <form method="POST" action="/action-over-result/{{event.id_tournament}}" class="card-actions">
+                        <input type="hidden" name="id" value="{{round.id_result}}">
+
+                        <button type="submit" name="action" value="edit">✏️</button>
+                        <button type="submit" name="action" value="delete">🗑️</button>
+                    </form>
+                </div>
+
+                <div class="round-header">
+                    <span class="round-number">Ronda {{id_round_calc}}</span>
+                    <span class="round-result">✨ {{round.result_win}} - {{round.result_loose}}</span>
+                </div>
+
+                <div class="round-body">
+
+                    <div class="round-row">
+                        <span class="label">Mi deck:</span>
+                        <span class="value">{{round.deck_name}}</span>
+                    </div>
+
+                    <div class="round-row">
+                        <span class="label">Tintas rival:</span>
+                        <div class="ink-icons">
+                            <img src="{{ url_for('static', filename='img/ink/'+round.first_ink|string+'.webp') }}" alt="Amber">
+                            <img src="{{ url_for('static', filename='img/ink/'+round.second_ink|string+'.webp') }}" alt="Sapphire">
+                        </div>
+                    </div>
+
+                    <div class="round-row">
+                        <span class="label">Inicio: </span>
+                        <span class="value">{% if round.is_otp == 1 %}🚀 OTP{%else%}🛡️ OTD{% endif%}</span>
+                    </div>
+
+                    <div class="round-row">
+                        <span class="label">Dado:</span>
+                        <span class="value">🎲 {% if round.has_won_dice == 1 %}✔{% else %}❌{% endif %}</span>
+                    </div>
+                    {% if round.replay_link is not none %}
+                    <div class="round-row">
+                        <span class="label">Repetición:</span>
+                        <span class="value"><a href="{{round.replay_link}}" target="_blank">Link</a></span>
+                    </div>
+                    {% endif %}
+
+                    <div class="round-notes">
+                        <span class="label">Notas:</span>
+                        <p>{{round.comment | replace('\n', '<br>') | safe}}</p>
+                    </div>
+
+                </div>
+
+            </div>
+            {% endfor %}
+
+
+        </main>
+
+        <div class="content">
+            <div class="round-card round-form">
+                <h2 class="form-title">Ver Runs</h2>
+                <form action="/see-event/{{event.id_tournament}}" method="POST" class="round-form-content">
+                    <div class="form-group">
+                        <label>Jugador</label>
+                        <select name="player" required>
+                            <option value="" selected>--</option>
+                            {% for player in all_players_on_event %}
+                            <option value="{{player.id_player}}">{{player.player_name}}</option>
+                            {% endfor %}
+                        </select>
+                        <button class="btn-submit" type="submit">Ver</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+</body>
+{% include "footer.html" %}
+</html>

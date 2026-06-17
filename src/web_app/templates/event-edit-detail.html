@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+{% include "template_head.html" %}
+<body>
+
+        {% include "template_header.html" %}
+
+        <main class="content">
+
+            <div class="content">
+                <br>
+                <h3>{{event.tournament_name}}</h3>
+                <div class="round-card round-form round-card-event">
+
+                    <h2 class="form-title">Editar Ronda</h2>
+
+                    <form action="/edit-round/{{result.id_result}}" method="POST" class="round-form-content">
+
+                        <div class="form-group">
+                            <label>Mi deck {{result.id_deck}}</label>
+                            <select name="my_deck" required>
+                                <option value="" selected>--</option>
+                                {% for deck in all_decks %}
+                                <option value="{{deck.id_deck}}" {% if deck.id_deck==result.id_deck%}selected{% endif%}>{{deck.deck_name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <div class="ink-selects">
+                                <label>Game 1</label>
+                                <select name="game_1">
+                                    <option value="" selected>--</option>
+                                    <option value="1" {% if result.win_first_game==1%}selected{% endif %}>Victoria</option>
+                                    <option value="0" {% if result.win_first_game==0%}selected{% endif %}>Derrota</option>
+                                </select>
+                                <label>Game 2</label>
+                                <select name="game_2">
+                                    <option value="" selected>--</option>
+                                    <option value="1" {% if result.win_second_game==1%}selected{% endif %}>Victoria</option>
+                                    <option value="0" {% if result.win_second_game==0%}selected{% endif %}>Derrota</option>
+                                </select>
+                                <label>Game 3</label>
+                                <select name="game_3">
+                                    <option value="" selected>--</option>
+                                    <option value="1" {% if result.win_third_game==1%}selected{% endif %}>Victoria</option>
+                                    <option value="0" {% if result.win_third_game==0%}selected{% endif %}>Derrota</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Tintas rival</label>
+                            <div class="ink-selects">
+                                <select name="enemy_faction" required>
+                                    <option value="1" {% if result.faction==1%}selected{% endif %}>Vanguard 🔵</option>
+                                    <option value="2" {% if result.faction==2%}selected{% endif %}>Dominion 🔴</option>
+                                    <option value="3" {% if result.faction==3%}selected{% endif %}>Omnic 🟡</option>
+                                    <option value="4" {% if result.faction==4%}selected{% endif %}>Outlander ⚪</option>
+                                </select>
+
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Inicio</label>
+                            <select name="starting">
+                                <option value="OTP" {% if result.is_otp==1%}selected{% endif %}>🚀 OTP</option>
+                                <option value="OTD" {% if result.is_otp==0%}selected{% endif %}>🛡️ OTD</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Ganó el dado?</label>
+                            <select name="won_dice">
+                                <option value="yes" {% if result.has_won_dice==1%}selected{% endif %}>🎲 Sí</option>
+                                <option value="no" {% if result.has_won_dice==0%}selected{% endif %}>❌ No</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Notas</label>
+                            <textarea class="height-textarea" name="notes" rows="3">{{result.comment}}</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Repetición de la Partida</label>
+                            <input type="text" id="link" name="link" maxlength="200" value="{% if result.replay_link is not none%}{{result.replay_link}}{% endif %}">
+                        </div>
+
+                        <button class="btn-submit" type="submit">Guardar Ronda</button>
+
+                    </form>
+                </div>
+            </div>
+
+        </main>
+
+</body>
+{% include "footer.html" %}
+</html>

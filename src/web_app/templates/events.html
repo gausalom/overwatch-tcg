@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+{% include "template_head.html" %}
+<body>
+
+        {% include "template_header.html" %}
+
+        <div class="deck-filters">
+            <div class="filter-group">
+                {% for s in (all_tournaments | map(attribute='set_tournament') | unique | list) %}
+                  <button class="filter-tag"
+                          data-filter-type="set"
+                          data-filter-value="{{ s }}">
+                    Set {{ s }}
+                  </button>
+                {% endfor %}
+            </div>
+
+        </div>
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="content">
+            {% if not youtube %}
+            <a href="/new-tournament" class="card">
+                {% if current_user.team is not none %}
+                    <img src="{{ url_for('static', filename='img/teams/'+current_user.team+'.webp') }}" alt="Imagen">
+                {% else %}
+                    <img src="{{ url_for('static', filename='img/logo.webp') }}" alt="Imagen">
+                {% endif %}
+                <div class="info">
+                    <h3>Nuevo Evento</h3>
+                    <p></p>
+                </div>
+            </a>
+            {% endif %}
+            {% for tournament in all_tournaments | reverse %}
+            <div class="card" tournament-id="{{tournament.id_tournament}}" data-set="{{ tournament.set_tournament }}">
+                <img src="{{ url_for('static', filename='img/decks/'+tournament.image+'.webp') }}" alt="Imagen">
+                <div class="info">
+                    <div class="title-box-decks">
+
+                        <h3>
+                            {{tournament.tournament_name}}
+                        </h3>
+                    </div>
+                    <p>[Set {{tournament.set_tournament}}]</p>
+                </div>
+            </div>
+            {% endfor %}
+
+
+        </main>
+
+    {% if youtube %}
+<script src="{{ url_for('static', filename='js/events-youtube.js') }}"></script>
+{% else %}
+<script src="{{ url_for('static', filename='js/events.js') }}"></script>
+{% endif %}
+
+</body>
+{% include "footer.html" %}
+</html>

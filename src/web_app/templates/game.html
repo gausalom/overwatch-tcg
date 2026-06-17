@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TheInkredibles</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/game.css') }}?v=1">
+
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/logo.ico') }}">
+</head>
+
+<body>
+
+<!-- 🔐 Datos inyectados por Flask -->
+  <div id="game-data"
+       data-id="{{ current_user.id }}"
+       data-read-only="{{ read_only }}"
+
+       data-since-scn="{{ since_scn }}"
+       data-last-scn="{{ game.last_scn }}"
+       data-seed="{{game.seed}}"
+
+       data-game-id="{{ game.id_game }}"
+       data-game-name="{{ game.game_name }}"
+       data-game-set="{{ game.game_set }}"
+
+       data-player-id="{{ game.id_user_main }}"
+       data-player-name="{{ game.user_name_main }}"
+       data-player-deck="{{ game.deck_user_main }}"
+       data-player-deck-shuffled="{{ game.deck_user_shuffled_main }}"
+
+       data-opponent-id="{{ game.id_user_opponent }}"
+       data-opponent-name="{{ game.user_name_opponent }}"
+       data-opponent-deck="{{ game.deck_user_opponent }}"
+       data-opponent-deck-shuffled="{{ game.deck_user_shuffled_opponent }}"
+       >
+  </div>
+
+<div class="table">
+
+  <div class="sidebar">
+    <div class="preview">La Taberna</div>
+    <div class="lore">
+        <div class="lore-row opponent">
+          <button id="opponent-lore-minus" class="lore-btn minus">−</button>
+          <div id="lore-opponent" class="lore-value">0</div>
+          <button id="opponent-lore-plus" class="lore-btn plus">+</button>
+        </div>
+
+        <div class="lore-row you">
+          <button id="you-lore-minus"  class="lore-btn minus">−</button>
+          <div id="lore-you" class="lore-value">0</div>
+          <button id="you-lore-plus" class="lore-btn plus">+</button>
+        </div>
+
+
+    </div>
+    <div class="log" id="game-log">
+    </div>
+
+  </div>
+
+  <div class="board">
+    <div class="player-name player-top-left" id="opponent-name">
+        {{game.user_name_opponent}}
+      </div>
+
+  <div class="player-name player-bottom-left" id="you-name">
+    {{game.user_name_main}}
+  </div>
+
+    <div class="player opponent">
+      <div class="zone hand">Opponent Hand</div>
+      <div class="zone middle">
+        <div class="ink">Ink</div>
+      </div>
+      <div class="zone field">Opponent Field</div>
+    </div>
+
+    <div class="player you">
+      <div class="zone field">Your Field</div>
+      <div class="zone middle">
+        <div class="ink">Ink</div>
+      </div>
+      <div class="zone hand">Your Hand</div>
+    </div>
+
+  </div>
+
+  <div class="sidebar">
+    <div class="controls">
+        <form action="/tavern">
+            <button id="exit">Salir</button>
+        </form>
+        <button id="copy-seed" data-text="{{game.seed}}" class="btn-action">Copiar Seed</button>
+        {% if read_only %}
+        <button id="see-deck">Ver Mazo</button>
+        <button id="see-opponent-deck">Ver Mazo Oponente</button>
+        {% endif %}
+        {% if not read_only and (current_user.id == game.id_user_main or current_user.id == game.id_user_opponent) %}
+        <form id="checkpoint">
+          <input type="text" name="game-id" value="{{game.id_game}}" hidden />
+          <button id="submit">Guardar Checkpoint</button>
+        </form>
+        <button id="finish">Finalizar Partida</button>
+        {% endif %}
+    </div>
+      {% if not read_only and (current_user.id == game.id_user_main or current_user.id == game.id_user_opponent) and game_type == 'game' %}
+            <div class="controls-middle">
+              <button id="shuffle-button">Shuffle</button>
+              <button id="see-discard-opponent">Ver Descarte Rival</button>
+              <button id="see-discard">Ver Descarte</button>
+                {% if game.id_user_main == game.id_user_opponent %}
+                <select id="control-side">
+                    <option value="you">ABAJO</option>
+                    <option value="opponent">ARRIBA</option>
+                </select>
+                {% endif %}
+            </div>
+
+
+
+            <div class="controls-down">
+                <div>
+                    <input id="see-x-value" type="number" min="0" max="10">
+                    <button id="see-x">Ver X</button>
+                </div>
+              <button id="draw-7">Robar 7</button>
+              <button id="discard-all-hand">Descartar Mano</button>
+              <button id="draw">Robar</button>
+
+            </div>
+      {% elif game_type == 'review' %}
+      <div class="controls-middle">
+        <form action="/delete-checkpoint" method="POST">
+          <input type="text" name="game-id" value="{{game.id_game}}" hidden />
+          <input type="text" name="since-scn" value="{{ since_scn }}" hidden />
+          <button type="submit">Borrar Checkpoint</button>
+        </form>
+
+        <form id="checkpoint">
+          <input type="text" name="game-id" value="{{game.id_game}}" hidden />
+          <button type="submit">Guardar Checkpoint</button>
+        </form>
+        <button id="go-end">Avanzar hasta el final</button>
+        <div class="controls-arrows">
+          <button id="arrow-left">◀</button>
+          <button id="arrow-right">▶</button>
+        </div>
+      </div>
+
+      <div class="controls-down">
+
+         <form id="duplicate-game">
+             <h4 class="white">Clonar Partida</h4>
+            <input type="text" name="game-id" value="{{game.id_game}}" hidden />
+            <label for="nombre">Nombre de la Partida</label>
+            <input type="text" id="nombre" name="nombre" maxlength="30" required>
+
+            <label for="id-opponent">Oponente</label>
+            <select id="id-opponent" name="id-opponent" required>
+                <option value="">Selecciona un Rival</option>
+                {% for user in all_users %}
+                    <option value="{{user.id_player}}">{{user.player_name}}</option>
+                {% endfor %}
+            </select>
+          <button type="submit">Duplicar Partida</button>
+        </form>
+
+      </div>
+      {% endif %}
+  </div>
+</div>
+
+
+
+</body>
+<div id="card-popup" class="card-popup hidden">
+  <div class="popup-overlay"></div>
+  <div class="popup-content">
+    <button class="popup-close">&times;</button>
+    <div class="popup-cards"></div>
+  </div>
+</div>
+
+<div id="confirm-overlay" class="confirm-overlay hidden">
+  <div class="confirm-popup">
+    <p>¿Seguro que quieres finalizar la partida?</p>
+    <div class="confirm-actions">
+      <button id="confirm-yes">Sí</button>
+      <button id="confirm-no">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<div id="finish-overlay" class="confirm-overlay hidden">
+  <div class="confirm-popup">
+    <p>¡Ha finalizado la partida!</p>
+      <form action="/tavern" method="GET">
+            <button class="btn-action" type="submit">Salir</button>
+        </form>
+  </div>
+</div>
+
+
+<script src="{{ url_for('static', filename='js/game-utils.js') }}"></script>
+<script src="{{ url_for('static', filename='js/game-copy.js') }}"></script>
+<script src="{{ url_for('static', filename='js/game-log.js') }}"></script>
+<script src="{{ url_for('static', filename='js/game-popup.js') }}"></script>
+<script src="{{ url_for('static', filename='js/game-ink-counter.js') }}"></script>
+<script src="{{ url_for('static', filename='js/game-preview.js') }}"></script>
+<script src="{{ url_for('static', filename='js/game-finish.js') }}"></script>
+<script src="{{ url_for('static', filename='js/game.js') }}"></script>
+{% include "footer.html" %}
+</html>

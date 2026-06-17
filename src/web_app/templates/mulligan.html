@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+{% include "template_head.html" %}
+<body>
+
+        {% include "template_header.html" %}
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="content">
+            <div class="content">
+                <a class="white" href="/deck/{{deck.id_deck}}">Volver</a>
+            </div>
+            <div class="mulligan-view">
+
+                <input type="hidden" id="deck_cards" value='{{ all_cards | tojson }}'>
+
+                <button id="mulliganBtn">Robar mano</button>
+
+                <div id="hand" class="hand"></div>
+
+                <div class="pre-mulligan-view">
+                    <div id="pre-hand" class="pre-hand"></div>
+                </div>
+                <br>
+                <br>
+                <br>
+                <br>
+                <button id="copyCardsBtn" type="button">
+                    📋 Copiar para la Guía
+                </button>
+
+            </div>
+
+
+        </main>
+
+<script src="{{ url_for('static', filename='js/mulligan.js') }}"></script>
+
+</body>
+{% include "footer.html" %}
+</html>

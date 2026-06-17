@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+{% include "template_head.html" %}
+<body>
+
+        {% include "template_header.html" %}
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="content">
+            <div class="calendar-container">
+
+                <div class="calendar-header">
+                    <button id="prevMonth">◀</button>
+                    <h2 id="monthYear"></h2>
+                    <button id="nextMonth">▶</button>
+                </div>
+
+                <div class="calendar-grid">
+                    <div class="day-name">Lun</div>
+                    <div class="day-name">Mar</div>
+                    <div class="day-name">Mié</div>
+                    <div class="day-name">Jue</div>
+                    <div class="day-name">Vie</div>
+                    <div class="day-name">Sáb</div>
+                    <div class="day-name">Dom</div>
+                </div>
+
+                <div id="calendarDays" class="calendar-grid"></div>
+                <br><br><br>
+                <div class="events-panel">
+                    <h3 id="selectedDate"></h3><br>
+                    <hr><br>
+                    <ul id="eventsList"></ul>
+                </div>
+            </div>
+
+            <div class="form-container">
+                <h3>Crear Evento</h3><br>
+                <form action="/add-new-event" method="POST">
+                    <label for="nombre">Nombre del Evento</label>
+                    <input type="text" id="nombre" name="nombre" maxlength="30" required>
+
+                    <label for="nombre">Descripción del Evento</label>
+                    <input type="text" id="description" name="description" maxlength="100" required>
+
+                    <label for="nombre">Día</label>
+                    <input type="date" id="calendar" name="calendar" maxlength="100" required>
+
+                    <button type="submit">Crear Evento</button>
+                </form>
+            </div>
+        </main>
+
+        <div id="events-data" hidden>{{ events | tojson }}</div>
+        <div id="user-name" hidden>{{ current_user.username }}</div>
+
+    <script src="{{ url_for('static', filename='js/calendar.js') }}"></script>
+</body>
+{% include "footer.html" %}
+</html>

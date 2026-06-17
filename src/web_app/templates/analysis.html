@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+{% include "template_head.html" %}
+<body>
+
+        {% include "template_header.html" %}
+
+        <div class="content-dashboard"><h3>Añadir Repeticiones</h3></div>
+        <div class="form-container">
+            <form action="/create-new-replay" method="POST">
+
+                <!-- Nombre -->
+                <label for="name">Nombre de la Partida</label>
+                <input type="text" id="name" name="name" maxlength="30" required>
+
+                <label for="link">Repetición</label>
+                <input type="text" id="link" name="link" maxlength="200" required>
+
+                <button type="submit">Añadir Repetición</button>
+            </form>
+
+        </div>
+
+        <div class="content-dashboard"><h3>Repeticiones</h3></div>
+        <div class="content">
+
+            <table id="players-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Jugador</th>
+                        <th>Nombre</th>
+                        <th>Vínculo</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for replay in all_replays %}
+                    <tr>
+                        <td><a href="/analysis/{{replay.id_replay}}">{{replay.id_replay}}</a></td>
+                        <td>{{replay.player_name}}</td>
+                        <td>{{replay.replay_name}}</td>
+                        <td><a href="{{replay.replay_link}}" target="_blank">Link</a></td>
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+            </table>
+
+
+        </div>
+
+
+
+
+</main>
+<script src="{{ url_for('static', filename='js/tavern.js') }}"></script>
+</body>
+{% include "footer.html" %}
+</html>

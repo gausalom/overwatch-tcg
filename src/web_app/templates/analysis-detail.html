@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+{% include "template_head.html" %}
+<body>
+
+        {% include "template_header.html" %}
+
+         <div class="statistics-section">
+
+            <h2>Replay</h2>
+
+            <!-- Filtros -->
+            <div class="filters-container">
+
+                <div class="filter-block">
+                    <h3>Jugador</h3>
+                    <div id="player-filters" class="filter-list">{{replay.player_name}}</div>
+                </div>
+
+                <div class="filter-block">
+                    <h3>Nombre</h3>
+                    <div id="tournament-filters" class="filter-list">{{replay.replay_name}}</div>
+                </div>
+
+                <div class="filter-block">
+                    <h3>Link</h3>
+                    <div id="version-filters" class="filter-list"><a href="{{replay.replay_link}}" target="_blank">Link</a></div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="comments-section">
+
+                <h3>Comentarios</h3>
+
+                <!-- LISTA DE COMENTARIOS -->
+                <div class="comments-list">
+
+                    {% for comment in all_comments%}
+                    <div class="comment">
+                        <div class="comment-header">
+                            <span class="comment-user">{{comment.player_name}}</span>
+                            <span class="comment-date">{{comment.date_created}}</span>
+                        </div>
+                        <div class="comment-body">
+                            {{comment.comment | replace('\n', '<br>') | safe}}
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                </div>
+
+                <!-- FORMULARIO PARA ESCRIBIR UN COMENTARIO -->
+                <form action="/comment-replay/{{ replay.id_replay }}" method="POST" class="comment-form">
+                    <label for="comentario">Añadir comentario</label>
+                    <textarea id="comentario" name="comentario" rows="4" placeholder="Escribe tu comentario..." required></textarea>
+                    <button type="submit">Publicar</button>
+                </form>
+
+        </div>
+
+</main>
+<script src="{{ url_for('static', filename='js/tavern.js') }}"></script>
+</body>
+{% include "footer.html" %}
+</html>

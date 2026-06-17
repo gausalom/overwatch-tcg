@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+{% include "template_head.html" %}
+<body>
+
+        <div class="page-layout">
+            <aside class="sidebar left">
+                <br><br><br>
+                <div class="sidebar-center">
+                        <img src="{{ url_for('static', filename='img/logo-elobservatorio.png') }}" alt="logo" class="card-img">
+                    </div><br><br><br><br>
+                <div class="deck-stat">
+                        <img src="{{ url_for('static', filename='img/ink/deck.svg') }}" class="deck-stat-icon">
+                        <span id="totalCards">
+                            {{ deck.all_cards | sum(attribute='qty') }}
+                        </span>
+                    </div>
+                    <div class="deck-stat">
+                        <img src="{{ url_for('static', filename='img/ink/inkcost.svg') }}" class="deck-stat-icon">
+                        <span id="totalNotInkable">
+                            {{ deck.all_cards
+                               | selectattr('inkwell', 'equalto', False)
+                               | map(attribute='qty')
+                               | map('int')
+                               | sum }}
+                        </span>
+                    </div>
+                    <canvas class="height-chart-deck" id="inkCurveChart"></canvas>
+
+
+            </aside>
+            <!-- CONTENIDO PRINCIPAL -->
+            <main class="content">
+
+                <div class="deck-view">
+
+                    <!-- Fila superior -->
+
+                    <!-- Deck Quick Data -->
+                    <input type="hidden" id="deck_cards" value='{{deck.all_cards | tojson}}' >
+
+
+                    <!-- Deck list -->
+                    <div class="deck-list">
+                        <!-- Cada carta -->
+                        {% for card in deck.all_cards %}
+                        <div class="card-slot">
+                            <img src="{{ url_for('static', filename='img/card_images/'+card.image) }}" alt="{{card.card}}" class="card-img">
+                            <span class="card-qty">{{card.qty}}</span>
+                        </div>
+                        {% endfor %}
+                        <div id="cardModal" class="modal">
+                            <img class="modal-content" id="modalImg">
+                        </div>
+                    </div>
+
+                </div>
+
+
+            </main>
+
+            <aside class="sidebar right">
+
+            </aside>
+        </div>
+    <script src="{{ url_for('static', filename='js/modal.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/stats.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/chart.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/deck-chart.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/html2canvas.min.js') }}"></script>
+</body>
+</html>

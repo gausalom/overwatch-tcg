@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+{% include "template_head.html" %}
+<body>
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="content">
+            <br>
+            <h1>{{event.tournament_name}}</h1>
+            <br>
+            <h2>{{final_result}}</h2>
+            <br><br><br><br>
+            {% for round in results %}
+                {% set id_round_calc = loop.index %}
+            <div class="round-card-youtube">
+
+                <div class="round-header-youtube">
+                    <span class="round-number">Ronda {{id_round_calc}}</span>
+
+                </div>
+
+                <div class="round-body-youtube">
+
+                    <div class="round-row-youtube">
+                        <div class="ink-icons-youtube">
+                            <img src="{{ url_for('static', filename='img/ink/'+round.first_ink|string+'.webp') }}" alt="Amber">
+                            <img src="{{ url_for('static', filename='img/ink/'+round.second_ink|string+'.webp') }}" alt="Sapphire">
+                        </div>
+                    </div>
+
+                    <div class="round-row-youtube">
+                        <span class="value-youtube">🎲 {% if round.has_won_dice == 1 %}✔{% else %}❌{% endif %}</span>
+                    </div>
+
+                    <div class="round-row-youtube">
+                        <span class="round-result">{{round.result_win}} - {{round.result_loose}} {% if round.win_first_game == 1%}W{% elif round.win_first_game == 0 %}L{%endif%}{% if round.win_second_game == 1%}W{% elif round.win_second_game == 0 %}L{%endif%}{% if round.win_third_game == 1%}W{% elif round.win_third_game == 0 %}L{%endif%}</span>
+                    </div>
+
+                </div>
+
+            </div>
+            {% endfor %}
+
+
+        </main>
+        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+        <div class="content">
+            <div class="round-card round-form">
+                <h2 class="form-title">Ver Runs</h2>
+                <form action="/see-event/{{event.id_tournament}}" method="POST" class="round-form-content">
+                    <div class="form-group">
+                        <label>Jugador</label>
+                        <select name="player" required>
+                            <option value="" selected>--</option>
+                            {% for player in all_players_on_event %}
+                            <option value="{{player.id_player}}">{{player.player_name}}</option>
+                            {% endfor %}
+                        </select>
+                        <button class="btn-submit" type="submit">Ver</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+</body>
+</html>

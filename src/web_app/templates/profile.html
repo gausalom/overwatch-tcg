@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+{% include "template_head.html" %}
+<body>
+
+        {% include "template_header.html" %}
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <div class="content-dashboard">
+
+            <div class="statistics-section">
+
+                <h2>Perfil</h2>
+                    <h4>{{current_user.username}}</h4>
+                    {% if current_user.team is not none %}
+                    <img class="width-team" src="{{ url_for('static', filename='img/teams/'+current_user.team+'.webp') }}" alt="Imagen">
+                    {% else %}
+                    {% endif %}
+                    <br>
+                    <br>
+
+                <!-- JSON embebido -->
+                <div class="hidden-deck-info" id="rounds-data">
+                    {{ data_deck|tojson }}
+                </div>
+
+                <!-- Resumen -->
+                <div id="general-stats" class="stats-block stats-grid"></div>
+
+                <!-- Winrate por combinación de tintas -->
+                <h3>Win-Rate</h3>
+                <div id="ink-stats" class="stats-grid"></div>
+
+                <br>
+                <div class="filters-container">
+                    <div class="filter-block">
+                    <h3>Set</h3>
+                    <div id="set-filter" class="filter-list"></div>
+                </div>
+            </div>
+
+            </div>
+
+
+        </div>
+
+    <script src="{{ url_for('static', filename='js/stats-profile.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/chart.js') }}"></script>
+</body>
+{% include "footer.html" %}
+</html>

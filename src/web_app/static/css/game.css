@@ -1,0 +1,834 @@
+:root {
+  --player-field-flex: 2;     /* campo */
+  --player-middle-flex: 1;    /* tinta / items */
+  --player-hand-flex: 2;      /* mano */
+
+  --opponent-field-flex: 2;
+  --opponent-middle-flex: 1;
+  --opponent-hand-flex: 2;
+
+  --hand-height: 130px;       /* altura mínima de la mano */
+  --middle-height: 60px;      /* altura mínima de tinta/items */
+  --field-height: auto;       /* campo toma lo que queda */
+}
+
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+    padding-bottom: 90px;
+    background: linear-gradient(135deg, #05070a 0%, #0b0f17 100%);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+}
+
+button {
+    width: 100%;
+    margin-top: 20px;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: #4ea3ff;
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s ease-in-out;
+}
+
+button:hover {
+    background: #75bfff;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;   /* 🔒 evita scroll */
+}
+
+
+.table {
+  width: 100%;
+  height: 96vh;
+  display: flex;
+}
+
+
+/* Sidebar */
+.sidebar {
+  width: 15%;
+  background: #111;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  gap: 10px;
+}
+
+.lore {
+  background: #181818;
+  border: 1px solid #444;
+  display: flex;
+  overflow: hidden;
+  padding: 5px;
+  flex-direction: column;
+}
+
+.lore-row {
+  display: grid;
+  grid-template-columns: 26px 1fr 26px;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Valor central */
+.lore-value {
+  background: #ccc;
+  color: #111;
+  font-size: 22px;
+  font-weight: bold;
+  text-align: center;
+  padding: 6px 0;
+  border-radius: 6px;
+  user-select: none;
+}
+
+/* Botones */
+.lore-btn {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+  background: #4ea3ff;
+  color: #000;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.lore-btn:hover {
+  background: #75bfff;
+}
+
+.lore-btn:disabled {
+  background: #999;        /* gris apagado */
+  color: #555;             /* texto más tenue */
+  cursor: not-allowed;     /* cursor de prohibido */
+  opacity: 0.6;            /* un poco transparente */
+}
+
+
+
+.log {
+  flex: 1;
+  background: #181818;
+  overflow-y: auto;
+  border: 1px solid #444;
+  padding: 5px;
+}
+
+.controls button {
+  width: 100%;
+  margin-top: 5px;
+}
+
+.controls-down {
+  margin-top: auto;
+  width: 100%;
+}
+
+.controls-down button {
+  width: 100%;
+  margin-top: 5px;
+}
+
+.controls-middle {
+  margin-top: 100%;
+  width: 100%;
+}
+
+.controls-middle button {
+  width: 100%;
+  margin-top: 5px;
+}
+
+/* Main board */
+.board {
+  width: 85%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.player {
+  height: 50%;
+  display: flex;
+  flex-direction: column;
+}
+
+
+/* Zones */
+.zone {
+  border: 1px solid #444;
+  display: flex;
+}
+
+/* Field is top zone */
+.field {
+  flex: 2;
+  background: #2a2a2a;
+}
+
+/* Middle is split in two */
+.middle {
+  flex: 1;
+  display: flex;
+}
+
+.middle > div {
+  flex: 1;
+  border: 1px solid #444;
+  display: flex;
+}
+
+.ink {
+  background: #003366;
+   display: flex;
+}
+
+/* Hand */
+.hand {
+  flex: 1;
+  background: #222;
+}
+
+/***** FOOTER ********/
+.container-policies {
+  display: flex; /* Los elementos hijos se organizan en fila */
+  flex-wrap: wrap; /* Permite que los elementos se envuelvan cuando no caben en la misma línea */
+  gap: 10px; /* Separación entre los elementos */
+}
+
+/* Estilo para los elementos dentro del contenedor */
+.container-policies .item {
+  flex: 1 1 100px; /* Los elementos pueden crecer y reducirse, pero el tamaño base será de 100px */
+  min-width: 100px; /* Evita que los elementos sean más pequeños que 100px */
+  padding: 20px; /* Espaciado interno */
+  text-align: center; /* Centra el texto dentro de los elementos */
+}
+
+/* Media query para pantallas pequeñas (móviles) */
+@media (max-width: 768px) {
+  .container-policies {
+    flex-direction: column; /* En pantallas más pequeñas, los elementos se apilan uno encima de otro */
+    align-items: center; /* Centra los elementos de manera horizontal */
+  }
+
+  .filter-list-decks {
+        display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 5px 16px; /* espacio entre elementos */
+    }
+}
+
+footer {
+        width: 100%;
+        background-color: #2a2a2a;
+        color: #999;
+        text-align: center;
+        padding: 10px 0;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        font-size: 14px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 20px;
+    }
+
+.height-chart-deck {
+    height: 100px !important;
+}
+
+.height-textarea {
+    height: 300px;
+    max-width: auto;
+    resize: vertical;
+
+}
+
+
+
+/********** CARDS **************/
+/* --------------------- */
+/* Estilo base de la carta */
+/* --------------------- */
+.card {
+  width: 120px;               /* ancho fijo */
+  height: 160px;             /* alto fijo */
+  border-radius: 2px;        /* bordes redondeados */
+  background-color: #fff;    /* color de fondo */
+  border: 1px solid #333;   /* borde oscuro */
+  box-shadow: 2px 4px 8px rgba(0,0,0,0.3); /* sombra para profundidad */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+  color: #222;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+  margin: 2px; /* separacion entre cartas */
+  position: relative;
+}
+
+
+/* Hover: levanta la carta */
+.card:hover {
+  /* transform: translateY(-10px); */
+  box-shadow: 4px 8px 16px rgba(0,0,0,0.4);
+}
+
+/* Estado boca abajo */
+.card.face-down {
+  background-color: #333;
+  color: transparent;
+  border: 1px solid #111;
+}
+
+.card-menu {
+  position: absolute;           /* Flotante sobre la carta */
+  background: #222;
+  border: 1px solid #444;
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;                /* Siempre encima de la carta */
+  min-width: 100px;
+  box-shadow: 2px 4px 8px rgba(0,0,0,0.5);
+  pointer-events: auto;
+}
+
+.card.exerted .card-menu {
+    margin-right: 20px;
+}
+
+
+.card-menu button {
+  margin-top: 3px;
+  background: #4ea3ff;
+  color: #000;
+  border: none;
+
+  padding: 3px 6px;     /* ⬅ menos alto, ancho controlado */
+  font-size: 12px;      /* ⬅ más pequeño */
+  line-height: 1.2;     /* ⬅ evita que crezca en alto */
+
+  border-radius: 3px;   /* ⬅ más acorde al tamaño */
+  cursor: pointer;
+}
+
+
+.card-menu button:hover {
+  background: #75bfff;
+}
+
+.ink .card{
+    height: 60px; /* En la tinta se ven más pequeñas. */
+    margin-left: -40px;   /* 👈 solapado */
+  z-index: 1
+}
+
+.ink .card:first-child {
+  margin-left: 0;
+}
+
+/* --------------------- */
+/* Layout de zona de cartas */
+/* --------------------- */
+.hand, .field, .ink {
+  display: flex;
+  flex-wrap: nowrap;       /* horizontal, sin saltos de línea */
+  justify-content: flex-start;
+  align-items: flex-end;
+  padding: 4px;
+}
+
+.hand {
+  justify-content: center;  /* cartas de la mano centradas */
+}
+
+.field {
+  justify-content: flex-start;
+}
+
+.ink {
+  position: relative;
+  min-height: 60px;
+}
+
+.player {
+  display: flex;
+  flex-direction: column;
+}
+
+.player.you .field {
+  flex: var(--player-field-flex);
+  min-height: var(--field-height);
+}
+
+.player.you .middle {
+  flex: var(--player-middle-flex);
+  min-height: var(--middle-height);
+}
+
+.player.you .hand {
+  flex: var(--player-hand-flex);
+  min-height: var(--hand-height);
+}
+
+/* Lo mismo para el oponente */
+.player.opponent .field {
+  flex: var(--opponent-field-flex);
+  min-height: var(--field-height);
+}
+
+.player.opponent .middle {
+  flex: var(--opponent-middle-flex);
+  min-height: var(--middle-height);
+}
+
+.player.opponent .hand {
+  flex: var(--opponent-hand-flex);
+  min-height: var(--hand-height);
+}
+
+/******************************************** PREVIEW *************************************************/
+.preview {
+  height: 300px;
+  background: #222;
+  border: 1px solid #444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.preview img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+
+/**************************************** POP UP *********************************************/
+.card-popup.hidden {
+  display: none;
+}
+
+.card-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2000;
+}
+
+.popup-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+}
+
+.popup-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #222;
+  border: 2px solid #555;
+  border-radius: 8px;
+  padding: 20px;
+
+  /* Tamaño configurable */
+  width: 80%;    /* puedes cambiarlo */
+  max-width: 800px;
+  height: 70%;   /* puedes cambiarlo */
+  max-height: 600px;
+
+  overflow-y: auto; /* scroll si hay muchas cartas */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.popup-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+.popup-close {
+  align-self: flex-end;
+  background: #444;
+  color: #fff;
+  border: none;
+  padding: 4px 10px;
+  font-size: 18px;
+  cursor: pointer;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.popup-close:hover {
+  background: #666;
+}
+
+.ink .exerted  {
+    transform: none;
+    opacity: 0.6;
+}
+
+.card.exerted {
+    transform: rotate(90deg);
+}
+
+.ink .card.exerted {
+    transform: none;
+}
+
+.card.exerted .card-menu {
+    transform: rotate(-90deg);
+}
+
+.ink .card.exerted .card-menu {
+    transform: none;
+}
+
+
+.ink-counter {
+  position: absolute;
+  top: 50%;            /* centrado verticalmente */
+  right: 8px;
+  color: #fff;
+  font-size: 25px;
+  pointer-events: none; /* para que no interfiera con los clicks */
+  opacity: 0.4;
+}
+
+.card-value {
+  position: absolute;
+  top: 35%;                 /* un poco arriba del centro */
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  background: rgba(120, 0, 0, 0.75); /* gris opaco */
+  color: #fff;
+  font-size: 18px;
+  font-weight: bold;
+
+  padding: 4px 8px;
+  border-radius: 6px;
+
+  pointer-events: none;     /* no bloquea clicks */
+  text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+}
+
+.exerted .card-value {
+    transform: rotate(-90deg);
+}
+
+
+
+.card-boost {
+  position: absolute;
+  top: 80%;                 /* un poco arriba del centro */
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  background: rgba(0, 0, 60, 0.75); /* gris opaco */
+  color: #fff;
+  font-size: 18px;
+  font-weight: bold;
+
+  padding: 4px 8px;
+  border-radius: 6px;
+
+  pointer-events: none;     /* no bloquea clicks */
+  text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+}
+
+.exerted .card-boost {
+    transform: rotate(-90deg);
+}
+
+
+.card-shift {
+  position: absolute;
+  top: 20%;                 /* un poco arriba del centro */
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  background: rgba(0, 150, 0, 0.75); /* gris opaco */
+  color: #fff;
+  font-size: 18px;
+  font-weight: bold;
+
+  padding: 4px 8px;
+  border-radius: 6px;
+
+  pointer-events: none;     /* no bloquea clicks */
+  text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+}
+
+.exerted .card-shift {
+    transform: rotate(-90deg);
+}
+
+.card-location {
+  position: absolute;
+  top: 80%;                 /* un poco arriba del centro */
+  left: 20%;
+  transform: translate(-50%, -50%);
+
+  background: rgba(250, 120, 50, 0.75); /* gris opaco */
+  color: #fff;
+  font-size: 18px;
+  font-weight: bold;
+
+  padding: 4px 8px;
+  border-radius: 6px;
+
+  pointer-events: none;     /* no bloquea clicks */
+  text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+}
+
+.exerted .card-location {
+    transform: rotate(-90deg);
+}
+
+.controls-down > div {
+  display: flex;
+  align-items: center;   /* centra verticalmente */
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.controls-down input[type="number"] {
+  width: 60px;
+  padding: 4px;
+  font-size: 12px;
+  border-radius: 4px;
+  border: 1px solid #aaa;
+}
+
+/************* POPUP ********************/
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999999;
+}
+
+.confirm-popup {
+  background: #222;
+  color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  min-width: 260px;
+  text-align: center;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+}
+
+.confirm-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+  gap: 10px;
+}
+
+.confirm-actions button {
+  flex: 1;
+  padding: 6px 10px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+#confirm-yes {
+  background: #e5533d;
+  border: none;
+  color: #fff;
+}
+
+#confirm-no {
+  background: #555;
+  border: none;
+  color: #fff;
+}
+
+.hidden {
+  display: none;
+}
+
+.log {
+  height: 200px;              /* ajusta a tu sidebar */
+  overflow-y: auto;
+  background: #111;
+  border: 1px solid #333;
+  padding: 6px;
+  font-size: 13px;
+  color: #ddd;
+}
+
+/* Cada línea */
+.log-entry {
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+
+/* Tipos opcionales */
+.log-entry.system {
+  color: #aaa;
+  font-style: italic;
+}
+
+.log-entry.action {
+  color: #4ea3ff;
+}
+
+.log-entry.error {
+  color: #ff6b6b;
+}
+
+/* Scroll bonito */
+.log::-webkit-scrollbar {
+  width: 6px;
+}
+
+.log::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 4px;
+}
+
+.log::-webkit-scrollbar-track {
+  background: #222;
+}
+
+.log-user {
+  color: #4A4A4A; /* gris */
+  font-weight: bold;
+  margin-right: 4px;
+}
+
+.log-card {
+    color: #CC78C9;
+}
+
+.controls-arrows {
+  display: flex;
+  width: 100%;
+  gap: 5px;
+}
+
+.controls-arrows button {
+  flex: 1;                 /* 50% cada uno */
+  height: 32px;
+  font-size: 16px;
+  padding: 0;
+  background: #4ea3ff;
+  color: #000;
+  border: none;
+  cursor: pointer;
+}
+
+.controls-arrows button:first-child {
+  border-right: 1px solid #333;
+  border-radius: 4px 0 0 4px;
+}
+
+.controls-arrows button:last-child {
+  border-radius: 0 4px 4px 0;
+}
+
+.controls-arrows button:hover {
+  background: #75bfff;
+}
+
+.controls-arrows button:disabled {
+  background: #888;
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+input,
+select,
+textarea {
+    width: 100%;
+    padding: 10px 12px;
+    margin-top: 5px;
+    border: 1px solid #3a4a61;
+    border-radius: 8px;
+    background: rgba(0,0,0,0.4);
+    color: white;
+    font-size: 1rem;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: #4ea3ff;
+    box-shadow: 0 0 6px rgba(78,163,255,0.5);
+}
+
+label {
+    display: block;
+    color: #cfd8e3;
+    font-size: 0.9rem;
+    margin-top: 12px;
+}
+
+.white{
+    color: #F0FFFF
+}
+
+.player-name {
+  position: absolute;
+  left: 10px;
+  padding: 6px 10px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-size: 14px;
+  border-radius: 6px;
+  z-index: 10;
+  pointer-events: none; /* no interfiere con clicks */
+  font-weight: bold;
+}
+
+/* Arriba izquierda */
+.player-top-left {
+  top: 10px;
+}
+
+/* Abajo izquierda */
+.player-bottom-left {
+  bottom: 10px;
+}

@@ -1,0 +1,33 @@
+<header class="topbar">
+    <div class="logo-container">
+        <img src="{{ url_for('static', filename='img/logo.webp') }}" class="logo" alt="Logo">
+    </div>
+
+    <nav class="menu">
+        <a href="/home">Inicio</a>
+        <a href="/decks">Mazos</a>
+        <a href="/events">Eventos</a>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/profile">Perfil</a>
+        <a href="/tavern">Taberna</a>
+        <a href="/analysis">Análisis</a>
+        <a href="/calendar">Calendario</a>
+        {% if current_user.is_admin == 1%}<a href="/control-panel">Panel de Control</a>{% endif %}
+        <a href="/logout">Desconectar</a>
+    </nav>
+
+    <select class="mobile-menu" id="mobile-menu">
+        <option value="" disabled selected>Menú</option>
+        <option value="/home">Inicio</option>
+        <option value="/decks">Mazos</option>
+        <option value="/events">Eventos</option>
+        <option value="/dashboard">Dashboard</option>
+        <option value="/profile">Perfil</option>
+        <option value="/analysis">Análisis</option>
+        <option value="/calendar">Calendario</option>
+        {% if current_user.is_admin == 1%}<option value="/control-panel">Panel de Control</option>{% endif %}
+        <option value="/logout">Desconectar</option>
+    </select>
+</header>
+
+<script src="{{ url_for('static', filename='js/header.js') }}"></script>

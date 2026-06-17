@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+{% include "template_head.html" %}
+<body>
+
+        {% include "template_header.html" %}
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="content">
+            <div class="content">
+                <a class="white" href="/deck/{{deck.id_deck}}">Volver</a>
+            </div>
+            <h2>Laboratorio Inkreible: {{deck.deck_name}}</h2><br><br>
+            <input type="hidden" id="cardData" value='{{cards | tojson}}' >
+            <input type="hidden" id="deck_id" value='{{deck.id_deck}}' >
+            <input type="hidden" id="deckListData" value='{{deck_list | tojson}}' >
+
+
+
+            <div class="grid">
+                <!-- Zona izquierda: buscador y listado -->
+                <section>
+
+                    <div id="cardModal" class="modal">
+                        <span class="close">&times;</span>
+                        <img class="modal-content" id="modalImg">
+                    </div>
+
+                    <h3>Buscar cartas</h3><br>
+                    <input id="searchInput" type="text" placeholder="Buscar..." /><br><br>
+                    <div>
+                        <div id="cardList">
+                            <!-- tarjetas -->
+                        </div>
+                    </div>
+
+
+                    <div class="filters-container-lab">
+                        <div class="filter-block">
+                            <h4>Expansión</h4>
+                            <div id="set-filters" class="filter-list-lab">
+                                {% for set in all_sets %}
+                                  <label>
+                                    <input type="checkbox" class="filter-set" value={{set.num}} {% if loop.last %}checked{% endif %}>
+                                    {{set.name}}
+                                  </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+                         <div class="filter-block">
+                             <h4>Tipo</h4>
+                            <div id="type-filters" class="filter-list-lab">
+                                {% for type in all_card_types %}
+                                  <label>
+                                    <input type="checkbox" class="filter-type" value={{type}}>
+                                    {{type}}
+                                  </label>
+                                {% endfor %}
+                            </div>
+                             <h4>Coste</h4>
+                             <div  class="filter-list-lab">
+                                {% for id in range(10) %}
+                                  <label>
+                                    <input type="checkbox" class="filter-cost" value={{id+1}}>
+                                    {{id+1}}
+                                  </label>
+                                {% endfor %}
+                            </div>
+                             <h4>Color</h4>
+                             <div  class="filter-list-lab">
+                                  <label>
+                                    <input type="checkbox" class="filter-color" value="vanguard" {% if deck.faction == 1 %}checked{% endif %}>
+                                    Vanguard
+                                  </label>
+                                 <label>
+                                    <input type="checkbox" class="filter-color" value="dominion" {% if deck.first_ink == 2 %}checked{% endif %}>
+                                    Dominion
+                                  </label>
+                                 <label>
+                                    <input type="checkbox" class="filter-color" value="omnic" {% if deck.first_ink == 3 %}checked{% endif %}>
+                                    Omnic
+                                  </label>
+                                 <label>
+                                    <input type="checkbox" class="filter-color" value="outlander" {% if deck.first_ink == 4 %}checked{% endif %}>
+                                    Outlander
+                                  </label>
+                            </div>
+                        </div>
+                    </div>
+                        <br><br><br>
+                    <canvas id="inkCurveChart"></canvas>
+
+
+                </section>
+
+
+                <!-- Zona derecha: mazo actual -->
+                <section>
+                <h3>Mazo Actual</h3>
+                <button id="saveDeckBtn" class="btn-lab">Guardar</button>
+                <div id="deckStats">
+                    <div class="deck-stat">
+                        <img src="{{ url_for('static', filename='img/ink/deck.svg') }}" class="deck-stat-icon">
+                        <span id="totalCards">0</span>
+                    </div>
+                </div>
+                <div id="deckList"></div>
+                </section>
+            </div>
+
+
+        </main>
+
+<script src="{{ url_for('static', filename='js/lab.js') }}"></script>
+<script src="{{ url_for('static', filename='js/chart.js') }}"></script>
+<script src="{{ url_for('static', filename='js/modal-lab.js') }}"></script>
+
+</body>
+{% include "footer.html" %}
+</html>
