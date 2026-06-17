@@ -7,52 +7,54 @@
 
         <!-- CONTENIDO PRINCIPAL -->
         <main class="content">
-            <h2>Últimos Comentarios</h2>
-            {% for comment in all_comments %}
-            <div class="cards-news-comments" comment-id="{{comment.id_deck}}">
-                <div class="info">
-                    <div class="title-box-decks">
-                        <h3>
-                            {{comment.player_name}}
-                        </h3>
-                    </div>
-                    <p>[{{comment.date_created}}]</p>
-                    <p> {{comment.deck_name}}</p>
-                </div>
-            </div>
-            {% endfor %}
-            <h2>Últimos Enfrentamientos</h2>
-            {% for result in all_results %}
-            <div class="cards-news" comment-id="{{result.id_tournament}}/{{result.id_player}}">
-                <div class="info">
-                    <div class="title-box-decks">
-                        <h3>
-                            {{result.player_name}} {{result.result_win}}-{{result.result_loose}}
-                        </h3>
-                    </div>
-                    <p>[{{result.date_created}}]</p>
-                    <p> {{result.tournament_name}}</p>
-                </div>
-            </div>
-            {% endfor %}
+            <div class="home-container">
+                <section class="home-section first-set">
+                    <h1 class="section-title">First Set Release</h1>
 
-            <h2>Últimos Mazos Actualizados</h2>
-            {% for result in all_last_decks %}
-            <div class="card" comment-id="{{result.id_deck}}">
-                <span class="deck-tag">Versión {{result.version}}</span>
-                <img src="{{ url_for('static', filename='img/decks/'+result.image+'.webp') }}" alt="Imagen">
-                <div class="info">
-                    <div class="title-box-decks">
-                        <h3>
-                            <img src="{{ url_for('static', filename='img/ink/'+result.first_ink|string+'.webp') }}" alt="Imagen">
-                            {{result.deck_name}}
-                            <img src="{{ url_for('static', filename='img/ink/'+result.second_ink|string+'.webp') }}" alt="Imagen">
-                        </h3>
+                    <div class="first-set-content">
+                        <img src="{{ url_for('static', filename='img/logo.webp') }}" alt="First Set Cover" class="first-set-image">
+
+                        <div class="first-set-text">
+                            <h2>Overwatch TCG: Global Uprising</h2>
+                            <p>
+                                The world has now split into four powerful factions, each seeking to claim, defend, or reshape control of the globe.
+                            </p>
+                            <p>
+                                Alliances will form, betrayals will happen, and every battle could change the course of history.
+                            </p>
+                        </div>
                     </div>
-                    <p>{{result.date_created}}</p>
-                </div>
+                </section>
+
+                <section class="home-section">
+                    <h1 class="section-title">Fan Project Statement</h1>
+
+                    <p class="home-text">
+                        This website is an independent, non-commercial fan-made project inspired by the video game
+                        Overwatch. It has been created purely for entertainment, creative exploration, and enjoyment
+                        within the community.
+                    </p>
+
+                    <p class="home-text">
+                        We do not claim ownership of any intellectual property, images, characters, names,
+                        logos, or other assets related to Overwatch. All rights, trademarks, and copyrights
+                        belong to their respective owners.
+                    </p>
+
+                    <p class="home-text">
+                        This project is not affiliated with, endorsed by, sponsored by, or connected to
+                        Blizzard Entertainment in any way.
+                    </p>
+
+                    <p class="home-text highlight">
+                        No financial profit is generated from this website.
+                        It exists solely as a passion project created to celebrate and enjoy an exceptional game.
+                    </p>
+
+                </section>
+
             </div>
-            {% endfor %}
+
         </main>
 
     <script src="{{ url_for('static', filename='js/home.js') }}"></script>

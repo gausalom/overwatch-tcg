@@ -22,11 +22,7 @@
         <main class="content">
             {% if not youtube %}
             <a href="/new-tournament" class="card">
-                {% if current_user.team is not none %}
-                    <img src="{{ url_for('static', filename='img/teams/'+current_user.team+'.webp') }}" alt="Imagen">
-                {% else %}
                     <img src="{{ url_for('static', filename='img/logo.webp') }}" alt="Imagen">
-                {% endif %}
                 <div class="info">
                     <h3>Nuevo Evento</h3>
                     <p></p>

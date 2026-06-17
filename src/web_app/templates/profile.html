@@ -12,10 +12,6 @@
 
                 <h2>Perfil</h2>
                     <h4>{{current_user.username}}</h4>
-                    {% if current_user.team is not none %}
-                    <img class="width-team" src="{{ url_for('static', filename='img/teams/'+current_user.team+'.webp') }}" alt="Imagen">
-                    {% else %}
-                    {% endif %}
                     <br>
                     <br>
 

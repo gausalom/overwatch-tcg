@@ -50,7 +50,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         document.getElementById("totalCards").textContent = total;
-        document.getElementById("totalNotInkable").textContent = notInkable;
     }
 
 

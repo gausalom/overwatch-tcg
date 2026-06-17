@@ -113,3 +113,12 @@ ID_PLAYER integer,
 COMMENT text,
 DATE_CREATED date
 );
+
+CREATE TABLE CALENDAR (
+    ID_EVENT integer NOT NULL PRIMARY KEY,
+    DAY text,
+    TITLE text,
+    DESCRIPTION text,
+    PLAYERS text,
+    DATE_CREATED date
+);
