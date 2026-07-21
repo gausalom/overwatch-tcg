@@ -55,23 +55,7 @@
                                 <button data-text="{{deck.deck_list}}" class="btn-action no-mobile">Laboratorio</button>
                             </form>
                         {% endif %}
-                        <button id="download-btn" class="btn-action no-mobile">📥 Foto</button>
-
-                        <form action="/guide/{{deck.id_deck}}" method="GET">
-                            <button id="guide" class="btn-action">📖 Guía</button>
-                        </form>
-                        <form action="/pdf/{{deck.id_deck}}" method="GET">
-                            <button class="btn-action">📄 PDF</button>
-                        </form>
                     </div>
-
-                    <form action="/mulligan/{{deck.id_deck}}" method="GET">
-                            <button id="mulligan" class="btn-action">Mulligan</button>
-                    </form>
-
-                    <form action="/training/{{deck.id_deck}}" method="GET">
-                            <button id="training" class="btn-action no-mobile">Training</button>
-                    </form>
 
                 </div>
                 <br>
@@ -132,53 +116,12 @@
 
             </div>
 
-            <div class="statistics-section">
-
-                <h2>Estadísticas</h2>
-
-                <!-- JSON embebido -->
-                <div class="hidden-deck-info" id="rounds-data">
-                    {{ data_deck|tojson }}
-                </div>
-
-                <!-- Filtros -->
-                <div class="filters-container">
-
-                    <div class="filter-block">
-                        <h3>Jugadores</h3>
-                        <div id="player-filters" class="filter-list"></div>
-                    </div>
-
-                    <div class="filter-block">
-                        <h3>Eventos</h3>
-                        <div id="tournament-filters" class="filter-list"></div>
-                    </div>
-
-                    <div class="filter-block">
-                        <h3>Versiones</h3>
-                        <div id="version-filters" class="filter-list"></div>
-                    </div>
-                </div>
-
-                <!-- Resumen -->
-                <div id="general-stats" class="stats-block stats-grid"></div>
-
-                <!-- Winrate por combinación de tintas -->
-                <h3>Win-Rate</h3>
-                <div id="ink-stats" class="stats-grid"></div>
-
-            </div>
-
-
         </main>
 
     <script src="{{ url_for('static', filename='js/copy.js') }}"></script>
     <script src="{{ url_for('static', filename='js/modal.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/stats.js') }}"></script>
     <script src="{{ url_for('static', filename='js/chart.js') }}"></script>
     <script src="{{ url_for('static', filename='js/deck-chart.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/html2canvas.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/download-image-deck.js') }}"></script>
 </body>
 {% include "footer.html" %}
 </html>

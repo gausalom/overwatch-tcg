@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+{% include "template_head.html" %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style-booster.css') }}?v=1">
+<body>
+
+        {% include "template_header.html" %}
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="content">
+            <div class="content">
+                <a class="white" href="/profile">Volver a mi Colección</a>
+            </div>
+            {% if all_cards | length > 0 %}
+            <div class="deck-view">
+
+                <!-- Deck list -->
+                <div class="deck-list-booster">
+                    <!-- Cada carta -->
+                    {% for card in all_cards %}
+                    <div class="card-slot-booster">
+                        <div class="card-booster">
+                            <div class="card-face-booster card-front-booster">
+                                <img class="" src="{{ url_for('static', filename='img/card_images/'+card.image) }}" alt="{{card.card}}" >
+                            </div>
+                            <div class="card-face-booster card-back-booster">
+                            <img class="" src="{{ url_for('static', filename='img/card_images/back.webp') }}">
+                                </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+            </div>
+
+            {% endif %}
+
+        </main>
+
+    <script src="{{ url_for('static', filename='js/open-booster.js') }}"></script>
+</body>
+{% include "footer.html" %}
+</html>

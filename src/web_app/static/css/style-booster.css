@@ -1,0 +1,60 @@
+.deck-list-booster {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.card-slot-booster {
+    width: 150px;
+    aspect-ratio: 63 / 88;
+    perspective: 1000px;
+    cursor: pointer;
+}
+
+.card-booster {
+    position: relative;
+    width: 100%;
+    height: 100%;
+
+    transform-style: preserve-3d;
+    -webkit-transform-style: preserve-3d;
+
+    transition: transform .6s;
+}
+
+.card-slot-booster.flipped .card-booster {
+    transform: rotateY(180deg);
+}
+
+.card-face-booster {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    border-radius: 12px;
+    overflow: hidden;
+
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+.card-face-booster img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+}
+
+/* Frontal (queda oculto al principio) */
+.card-front-booster {
+    transform: rotateY(180deg);
+}
+
+/* Dorso (visible al principio) */
+.card-back-booster {
+    transform: rotateY(0deg);
+}

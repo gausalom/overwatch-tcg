@@ -57,7 +57,7 @@ class DatabaseManager:
         user = None
         query = """
             SELECT 
-                ID_PLAYER, PLAYER_NAME, PLAYER_PASSWORD, DATE_CREATED, TEAM, IS_ADMIN, IS_INACTIVE
+                ID_PLAYER, PLAYER_NAME, PLAYER_PASSWORD, DATE_CREATED, TEAM, IS_ADMIN, IS_INACTIVE, num_booster_to_open, booster_last_opened
             FROM PLAYER 
             WHERE ID_PLAYER = ?
         """
@@ -73,6 +73,8 @@ class DatabaseManager:
             user['team'] = row[4]
             user['is_admin'] = row[5]
             user['is_inactive'] = row[6]
+            user['num_booster_to_open'] = row[7]
+            user['booster_last_opened'] = row[8]
         cursor.close()
         return user
 
@@ -219,6 +221,24 @@ class DatabaseManager:
         """
         values = (
             deck_id,
+        )
+        self.run_update_query(query, values)
+
+    def update_add_num_boosters_for_players(self, data):
+        query = """
+        UPDATE PLAYER SET NUM_BOOSTER_TO_OPEN = CASE WHEN NUM_BOOSTER_TO_OPEN IS NULL then 0 else NUM_BOOSTER_TO_OPEN end + ?, BOOSTER_LAST_OPENED = ? where ID_PLAYER = ?
+        """
+        values = (
+            data['num_booster_to_open'], data['date'], data['id_player'],
+        )
+        self.run_update_query(query, values)
+
+    def update_open_booster(self, id_player):
+        query = """
+        UPDATE PLAYER SET NUM_BOOSTER_TO_OPEN = NUM_BOOSTER_TO_OPEN - 1 where ID_PLAYER = ?
+        """
+        values = (
+            id_player,
         )
         self.run_update_query(query, values)
 
@@ -590,6 +610,30 @@ class DatabaseManager:
                     ) c on a.ID_DECK = c.ID_DECK
                     WHERE a.ID_DECK="""+str(id_deck)
         return self.run_select_query(query)[0]
+
+    def get_collection(self, id_player):
+        query = """select DECK_LIST, DATE_CREATED FROM COLLECTION
+                    WHERE ID_PLAYER="""+str(id_player)
+        return self.run_select_query(query)
+
+    def set_new_collection(self, data):
+        query = """
+                INSERT INTO COLLECTION (ID_PLAYER, DECK_LIST, DATE_CREATED)
+                VALUES (?,?,datetime('now'))
+                """
+        values = (
+            data['id_player'], data['deck_list'],
+        )
+        self.run_update_query(query, values)
+
+    def set_collection(self, deck_list, id_player):
+        query = """
+                UPDATE COLLECTION SET DECK_LIST = ?, date_created = datetime('now') where ID_PLAYER = ?
+                """
+        values = (
+            deck_list, id_player,
+        )
+        self.run_update_query(query, values)
 
     def get_deck_by_version(self, id_deck, version):
         query = """select a.*, b.PLAYER_NAME, c.DECK_LIST, c.VERSION, d.VERSIONS, c.DATE_CREATED as DATE_UPDATE

@@ -6,42 +6,66 @@
         {% include "template_header.html" %}
 
         <!-- CONTENIDO PRINCIPAL -->
-        <div class="content-dashboard">
+        <main class="content">
 
-            <div class="statistics-section">
-
-                <h2>Perfil</h2>
-                    <h4>{{current_user.username}}</h4>
-                    <br>
-                    <br>
-
-                <!-- JSON embebido -->
-                <div class="hidden-deck-info" id="rounds-data">
-                    {{ data_deck|tojson }}
-                </div>
-
-                <!-- Resumen -->
-                <div id="general-stats" class="stats-block stats-grid"></div>
-
-                <!-- Winrate por combinación de tintas -->
-                <h3>Win-Rate</h3>
-                <div id="ink-stats" class="stats-grid"></div>
-
-                <br>
-                <div class="filters-container">
-                    <div class="filter-block">
-                    <h3>Set</h3>
-                    <div id="set-filter" class="filter-list"></div>
-                </div>
-            </div>
+            {% if user_data.num_booster_to_open > 0 %}
+            <!-- ABRIR NUEVOS SOBRES -->
+            <div class="comments-section">
+                <h4>Sobres por abrir: {{user_data.num_booster_to_open}}</h4>
+                <form action="/open-booster" method="POST">
+                    <button class="btn-action" type="submit"><img class="height-200" src="{{ url_for('static', filename='img/booster.webp') }}" alt="Imagen"></button>
+                </form>
 
             </div>
+            {% endif %}
+
+            {% if deck.all_cards | length > 0 %}
+            <div class="deck-view">
+
+                <!-- Deck list -->
+                <div class="deck-list">
+                    <!-- Cada carta -->
+                    {% for card in deck.all_cards %}
+                    <div class="card-slot">
+                        <img src="{{ url_for('static', filename='img/card_images/'+card.image) }}" alt="{{card.card}}" class="card-img">
+                        <span class="card-qty">{{card.qty}}</span>
+                    </div>
+                    {% endfor %}
+                    <div id="cardModal" class="modal">
+                        <span class="close">&times;</span>
+                        <img class="modal-content" id="modalImg">
+                    </div>
+                </div>
+
+            </div>
+            {% else %}
+                <!-- ESCOGER FACCION -->
+                <div class="comments-section">
+                    <h2 class="deck-title">Escoger Facción</h2>
+                    <form action="/choose-faction/1" method="POST">
+                        <button class="btn-action" type="submit"><img class="height-50" src="{{ url_for('static', filename='img/ink/1.webp') }}" alt="Imagen"></button>
+                    </form>
+                    <form action="/choose-faction/2" method="POST">
+                        <button class="btn-action" type="submit"><img class="height-50" src="{{ url_for('static', filename='img/ink/2.webp') }}" alt="Imagen"></button>
+                    </form>
+                    <form action="/choose-faction/3" method="POST">
+                        <button class="btn-action" type="submit"><img class="height-50" src="{{ url_for('static', filename='img/ink/3.webp') }}" alt="Imagen"></button>
+                    </form>
+                    <form action="/choose-faction/4" method="POST">
+                        <button class="btn-action" type="submit"><img class="height-50" src="{{ url_for('static', filename='img/ink/4.webp') }}" alt="Imagen"></button>
+                    </form>
 
 
-        </div>
+                </div>
+            {% endif %}
 
-    <script src="{{ url_for('static', filename='js/stats-profile.js') }}"></script>
+
+        </main>
+
+    <script src="{{ url_for('static', filename='js/copy.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/modal.js') }}"></script>
     <script src="{{ url_for('static', filename='js/chart.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/deck-chart.js') }}"></script>
 </body>
 {% include "footer.html" %}
 </html>

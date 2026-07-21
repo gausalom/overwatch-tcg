@@ -42,6 +42,8 @@ PLAYER_PASSWORD       text     ,
 DATE_CREATED         date
 , TEAM TEXT, IS_ADMIN BOOL, IS_INACTIVE BOOL);
 
+alter table PLAYER add column num_booster_to_open integer;
+alter table PLAYER add column booster_last_opened timestamp;
 -- RESULTS_IN_TOURNAMENTS definition
 
 CREATE TABLE "RESULTS_IN_TOURNAMENTS" (
@@ -120,5 +122,11 @@ CREATE TABLE CALENDAR (
     TITLE text,
     DESCRIPTION text,
     PLAYERS text,
+    DATE_CREATED date
+);
+
+CREATE TABLE COLLECTION (
+    ID_PLAYER integer,
+    DECK_LIST text,
     DATE_CREATED date
 );

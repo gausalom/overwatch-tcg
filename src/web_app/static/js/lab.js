@@ -404,7 +404,14 @@ document.addEventListener("DOMContentLoaded", () => {
         deck[card.id] = { card, qty: 1 };
     }
     else {
-        deck[card.id].qty++;
+        const carta_a_buscar = cards.find(c => c.id === card.id);
+
+        const qty = carta_a_buscar ? carta_a_buscar.qty : 0;
+        console.log(qty);
+        if (deck[card.id].qty < qty){
+            deck[card.id].qty++;
+        }
+
     }
     renderDeck();
   }

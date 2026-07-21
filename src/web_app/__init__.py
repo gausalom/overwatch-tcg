@@ -15,6 +15,7 @@ from reportlab.pdfgen import canvas
 from PyPDF2 import PdfReader, PdfWriter
 import io
 import random
+from collections import Counter
 
 app = Flask(__name__)
 app.secret_key = config['App']['SecretKey']
@@ -107,19 +108,151 @@ def view_decks_youtube():
     return render_template('decks.html', all_decks=all_decks, youtube=True)
 
 
-@app.route('/dashboard', methods=['GET'])
-@login_required
-def view_dashboard():
-    data_deck = databaseManager.get_all_results_for_dashboard(current_user.team)
-    return render_template('dashboard.html', data_deck=data_deck)
+def return_collection(id_user):
+    deck_list = databaseManager.get_collection(id_user)
+    if len(deck_list) > 0:
+        deck_list = deck_list[0]['deck_list']
+    else:
+        deck_list = ''
+    deck = dict()
+    deck['all_cards'] = []
+    if deck_list != '' and deck_list is not None:
+        lineas = [line.strip() for line in deck_list.splitlines() if line.strip()]
+        for line in lineas:
+            card = dict()
+            card['card'] = line[2:]
+            card['name'] = line[2:]
+            card['qty'] = line[0]
+            if not card['qty'].isdigit():
+                card['qty'] = 0
+            else:
+                card['qty'] = int(card['qty'])
+            card['image'] = "back.webp"
+            card['type'] = "unknown"
+            card['cost'] = 0
+            for c in metadata_cards:
+                if c['name'].upper() == card['card'].upper():
+                    card['image'] = c['image']
+                    card['type'] = c['type']
+                    card['cost'] = c['cost']
+                    card['id'] = c['id']
+                    card['faction'] = c['faction']
+                    card['set'] = c['set']
+                    card['rarity'] = c['rarity']
+                    break
+            deck['all_cards'].append(card)
+    deck['all_cards'] = sorted(
+        deck['all_cards'],
+        key=lambda card: (card['type'], card['cost'])
+    )
+    return deck
 
 
 @app.route('/profile', methods=['GET'])
 @login_required
-@login_required
 def view_profile():
-    data_deck = databaseManager.get_all_results_by_player(current_user.id)
-    return render_template('profile.html', data_deck=data_deck)
+    deck = return_collection(current_user.id)
+
+    # Calculo de Sobres
+    user_data = databaseManager.get_user(current_user.id)
+    if user_data['num_booster_to_open'] is None: user_data['num_booster_to_open'] = 0
+    if user_data['booster_last_opened'] is None:
+        user_data['num_booster_to_open'] = 5
+        databaseManager.update_add_num_boosters_for_players(user_data)
+    else:
+        fecha = datetime.datetime.strptime(user_data['booster_last_opened'], "%Y-%m-%d %H:%M:%S")
+        # Fecha actual
+        ahora = datetime.datetime.now()
+        # Diferencia
+        diferencia = ahora - fecha
+        # Número de bloques completos de 8 horas
+        bloques_8h = diferencia.total_seconds() // (8 * 3600)
+
+        fecha_actualizada = fecha + datetime.timedelta(hours=bloques_8h * 8)
+        user_data['date'] = fecha_actualizada
+
+        user_data['num_booster_to_open'] = int(bloques_8h)
+        if bloques_8h > 5: user_data['num_booster_to_open'] = 5
+        if bloques_8h > 0: databaseManager.update_add_num_boosters_for_players(user_data)
+
+    user_data = databaseManager.get_user(current_user.id)
+    return render_template('profile.html', deck=deck, user_data = user_data)
+
+
+
+@app.route('/open-booster', methods=['POST'])
+@login_required
+def view_open_booster():
+
+    user_info = databaseManager.get_user(current_user.id)
+    if user_info['num_booster_to_open']<=0: return redirect("/profile")
+
+    r1 = [c for c in metadata_cards if c['rarity'] == 1]
+    r2 = [c for c in metadata_cards if c['rarity'] == 2]
+    r3 = [c for c in metadata_cards if c['rarity'] == 3]
+    r4 = [c for c in metadata_cards if c['rarity'] == 4]
+    # Elegir si la última será de rareza 3 o 4
+    ultima_rareza = random.choice([3, 4])
+    r_final = r3 if ultima_rareza == 3 else r4
+
+    resultado = (
+            random.sample(r1, 4) +
+            random.sample(r2, 2) +
+            random.sample(r_final, 1)
+    )
+
+    # Mezclar el orden final
+    random.shuffle(resultado)
+    collection = databaseManager.get_collection(current_user.id)[0]
+    # Leer el texto existente
+    contador = Counter()
+    for linea in collection['deck_list'].splitlines():
+        if linea is None or linea=='': continue
+        cantidad, nombre = linea.split(" ", 1)
+        contador[nombre] = int(cantidad)
+
+    # Sumar las nuevas cartas
+    for carta in resultado:
+        contador[carta["name"]] += 1
+
+    # Generar la nueva cadena
+    resultado_final = "\n".join(
+        f"{cantidad} {nombre}"
+        for nombre, cantidad in sorted(contador.items())
+    )
+
+
+    databaseManager.set_collection(resultado_final, current_user.id)
+    databaseManager.update_open_booster(current_user.id)
+
+    return render_template('open-booster.html', all_cards=resultado)
+
+
+@app.route('/choose-faction/<id_faction>', methods=['POST'])
+@login_required
+def choose_faction(id_faction):
+    list_by_faction = []
+    list_by_faction.append("""1 Doomfist - Supreme Warrior
+1 Doomfist - Fist of Conflict
+1 Moira - Dark Scientist
+1 Moira - Genetic Manipulator
+    """)
+    list_by_faction.append("""2 Winston - Visionary Scientist
+2 Brigitte - Field Engineer
+        """)
+
+    list_by_faction.append("""3 Winston - Visionary Scientist
+2 Brigitte - Field Engineer
+            """)
+    list_by_faction.append("""4 Winston - Visionary Scientist
+    2 Brigitte - Field Engineer
+                """)
+    data = dict()
+    data['id_player'] = current_user.id
+    data['deck_list'] = list_by_faction[int(id_faction)-1]
+    databaseManager.set_new_collection(data)
+
+    return redirect("/profile")
 
 
 @app.route('/home', methods=['GET'])
@@ -130,16 +263,6 @@ def view_home():
     all_last_decks = databaseManager.get_last_updates_on_decks(current_user.team)
     return render_template('home.html', all_comments=all_comments, all_results=all_results, all_last_decks=all_last_decks)
 
-
-@app.route('/mulligan/<deck_id>', methods=['GET'])
-@login_required
-def view_mulligan(deck_id):
-    deck = get_deck_for_web(deck_id)
-    all_cards = []
-    for card in deck['all_cards']:
-        for qty in range(card['qty']):
-            all_cards.append(card['image'])
-    return render_template('mulligan.html', all_cards=all_cards, deck=deck)
 
 
 def get_deck_for_web(deck_id, version=None):
@@ -606,8 +729,13 @@ def view_edit_deck_lab_get(deck_id):
                     deck_list.append([c, card_qty])
                     break
 
+    collection = return_collection(current_user.id)
+    if 'all_cards' in collection:
+        collection = collection['all_cards']
+    else:
+        collection = cards
 
-    return render_template('edit-deck-lab.html', deck=deck, cards=cards,
+    return render_template('edit-deck-lab.html', deck=deck, cards=collection,
                            deck_list=deck_list, all_sets=all_sets , all_card_types=all_card_types)
 
 
@@ -1101,6 +1229,32 @@ def add_action_to_game(game_id):
         id_action = 28
     elif data['type'] == 'BOTTOM_MULLIGAN':
         id_action = 29
+    elif data['type'] == 'PLAY2':
+        id_action = 30
+    elif data['type'] == 'PLAY3':
+        id_action = 31
+    elif data['type'] == 'TO_BASE':
+        id_action = 32
+    elif data['type'] == 'ADD_ENERGY':
+        id_action = 33
+    elif data['type'] == 'REMOVE_ENERGY':
+        id_action = 34
+    elif data['type'] == 'LOC_1_MINUS':
+        id_action = 35
+    elif data['type'] == 'LOC_1_PLUS':
+        id_action = 36
+    elif data['type'] == 'LOC_2_MINUS':
+        id_action = 37
+    elif data['type'] == 'LOC_2_PLUS':
+        id_action = 38
+    elif data['type'] == 'LOC_3_MINUS':
+        id_action = 39
+    elif data['type'] == 'LOC_3_PLUS':
+        id_action = 40
+    elif data['type'] == 'SHIELD_PLUS':
+        id_action = 41
+    elif data['type'] == 'SHIELD_MINUS':
+        id_action = 42
 
     new_action['id_action'] = id_action
     databaseTavernManager.add_new_action(new_action)

@@ -21,6 +21,10 @@ const GAME = {
   opponent_name: game_data.dataset.opponentName,
   opponent_deck: game_data.dataset.opponentDeck,
   opponent_deck_shuffled: game_data.dataset.opponentDeckShuffled,
+
+  location_1: game_data.dataset.location1,
+  location_2: game_data.dataset.location2,
+  location_3: game_data.dataset.location3,
 }
 
 const all_actions = []
@@ -47,10 +51,17 @@ function buildInitialState() {
       pos_opponent: [Number(GAME.player_id), Number(GAME.opponent_id)].includes(Number(GAME.my_id)) ? Number(GAME.player_id) ===  Number(GAME.my_id) ? 'opponent' : 'you' : 'opponent',
       guest: [Number(GAME.player_id), Number(GAME.opponent_id)].includes(Number(GAME.my_id)) ? false : true,
       seed: GAME.seed,
-      lore_you: 0,
-      lore_opponent: 0,
+      loc_1_you: 0,
+      loc_1_opp: 0,
+      loc_2_you: 0,
+      loc_2_opp: 0,
+      loc_3_you: 0,
+      loc_3_opp: 0,
       read_only: GAME.read_only === "True",
-      since_scn: GAME.since_scn
+      since_scn: GAME.since_scn,
+      location_1: GAME.location_1,
+      location_2: GAME.location_2,
+      location_3: GAME.location_3,
     },
     you: {
       id: Number(GAME.player_id),
@@ -59,8 +70,11 @@ function buildInitialState() {
       discard: [],
       ink: [],
       items: [],
-      field: [],
-      name: GAME.player_name
+      field1: [],
+      field2: [],
+      field3: [],
+      name: GAME.player_name,
+      energy: 0
     },
     opponent: {
       id: Number(GAME.opponent_id),
@@ -69,19 +83,23 @@ function buildInitialState() {
       discard: [],
       ink: [],
       items: [],
-      field: [],
-      name: GAME.opponent_name
+      field1: [],
+      field2: [],
+      field3: [],
+      name: GAME.opponent_name,
+      energy: 0
     }
   }
 }
 
 let state = buildInitialState()
 
-console.log(state)
 /********************************************* PROCESAR ACCIONES ******************************************************/
-const POLL_INTERVAL = 1000
+const POLL_INTERVAL = 400
 
 let lastSCN = 0
+
+setLocations(GAME.location_1, GAME.location_2, GAME.location_3);
 
 function onCardClick(cardId, zoneName, event) {
    // Si hay una acción pendiente y la carta está en una zona válida
@@ -95,6 +113,12 @@ function onCardClick(cardId, zoneName, event) {
   // Si no hay acción pendiente, mostramos el menú normal
   showCardMenu(event.currentTarget, cardId, zoneName);
 }
+
+const modal = document.getElementById("imageModal");
+const modalImg = document.getElementById("modalImg");
+modal.addEventListener("click", () => {
+  modal.style.display = "none";
+});
 
 function createCardElement(card, faceUp, zoneName, seat_card) {
   const div = document.createElement("div")
@@ -127,16 +151,27 @@ function createCardElement(card, faceUp, zoneName, seat_card) {
     div.classList.add('exerted')
   }
 
-    console.log(seat_card);
-    console.log(state.game.pos);
     if (faceUp && !state.game.guest && !state.game.read_only && seat_card == state.game.pos){
         div.onclick = (e) => onCardClick(cardUuid, zoneName, e)
-        console.log("paso");
       }
 
    // Hover para previsualizar
   div.onmouseenter = () => showPreview(cardId, faceUp, cardStatus, state.game.guest)
   div.onmouseleave = () => clearPreview()
+
+  // añadir vista modal
+  div.addEventListener("contextmenu", (e) => {
+    e.preventDefault(); // evita menú del navegador
+    if (div.classList.contains("face-down")) {
+      return;
+    }
+
+    const id = div.dataset.cardId;
+    const imgPath = `/static/img/card_images/${id}.webp`;
+
+    modalImg.src = imgPath;
+    modal.style.display = "flex";
+  });
 
   // Añadimos los contadores
   if (card[5] !== undefined && card[5] !== null && card[5]!=0) {
@@ -153,6 +188,14 @@ function createCardElement(card, faceUp, zoneName, seat_card) {
       div.appendChild(value)
     }
 
+
+    if (card[9] !== undefined && card[9] > 0 ) {
+      const value = document.createElement("div")
+      value.className = "card-boost"
+      value.textContent = card[9]
+      div.appendChild(value)
+    }
+
    if (card[7] !== undefined && card[7].length > 0 ) {
       const value = document.createElement("div")
       value.className = "card-shift"
@@ -160,7 +203,7 @@ function createCardElement(card, faceUp, zoneName, seat_card) {
       div.appendChild(value)
     }
 
-    if (card[9] !== undefined && card[9] ) {
+    if (card[8] !== undefined && card[8] ) {
       const value = document.createElement("div")
       value.className = "card-location"
       value.textContent = "L"
@@ -184,7 +227,7 @@ function renderZone(selector, cards, faceUp, zoneName) {
 
 function clearZones() {
 
-  document.querySelectorAll(".hand, .field, .ink, .items").forEach(el => {
+  document.querySelectorAll(".hand, .field-lane, .ink, .items, .energy").forEach(el => {
     el.innerHTML = ""
   })
 }
@@ -202,6 +245,27 @@ function renderLoreValues() {
   }
 }
 
+function renderConqValues(){
+    const youLoc1Value = document.getElementById("loc-1-value-you");
+    youLoc1Value.textContent = state.game.loc_1_you || 0;
+
+    const youLoc2Value = document.getElementById("loc-2-value-you");
+    youLoc2Value.textContent = state.game.loc_2_you || 0;
+
+    const youLoc3Value = document.getElementById("loc-3-value-you");
+    youLoc3Value.textContent = state.game.loc_3_you || 0;
+
+     const oppLoc1Value = document.getElementById("loc-1-value-opp");
+    oppLoc1Value.textContent = state.game.loc_1_opp || 0;
+
+    const oppLoc2Value = document.getElementById("loc-2-value-opp");
+    oppLoc2Value.textContent = state.game.loc_2_opp || 0;
+
+    const oppLoc3Value = document.getElementById("loc-3-value-opp");
+    oppLoc3Value.textContent = state.game.loc_3_opp || 0;
+
+}
+
 function render(state) {
   clearZones()
   let faceUp = state.game.my_id != state.opponent.id;
@@ -211,18 +275,22 @@ function render(state) {
   }
 
   renderZone(".you .hand", state.you.hand, faceUp, "hand")
-  renderZone(".you .field", state.you.field, true, "field")
+  renderZone(".you .field .lane-1", state.you.field1, true, "field")
+  renderZone(".you .field .lane-2", state.you.field2, true, "field")
+  renderZone(".you .field .lane-3", state.you.field3, true, "field")
   renderZone(".you .ink", state.you.ink, true, "ink")
 
   renderZone(".opponent .hand", state.opponent.hand, !faceUp, "hand")
-  renderZone(".opponent .field", state.opponent.field, true, "field")
+  renderZone(".opponent .field .lane-1", state.opponent.field1, true, "field")
+  renderZone(".opponent .field .lane-2", state.opponent.field2, true, "field")
+  renderZone(".opponent .field .lane-3", state.opponent.field3, true, "field")
   renderZone(".opponent .ink", state.opponent.ink, true, "ink")
 
    // Actualizar contadores de ink
-  updateInkCounter(state.you, ".you .ink");
-  updateInkCounter(state.opponent, ".opponent .ink");
+  updateEnergyCounter(state.you, ".you .energy");
+  updateEnergyCounter(state.opponent, ".opponent .energy");
 
-  renderLoreValues();
+  renderConqValues();
 }
 
 /********************************** FUNCIONAR A APLICAR *******************************/
@@ -241,7 +309,7 @@ function handleDraw(action) {
 
     const is_mine = (state.game.pos == targetName) ? true : false;
   // Añadir a la mano
-  target.hand.push([card,uuid, 1, is_mine, false, 0, [], [], false]) // Carta, Identificador Unico, Boca Arriba o Boca Abajo, es mia,  exerted, contadores, Boost, Shift, is_in_location
+  target.hand.push([card,uuid, 1, is_mine, false, 0, [], [], false, 0]) // Carta, Identificador Unico, Boca Arriba o Boca Abajo, es mia,  exerted, contadores, Boost, Shift, is_in_location
 }
 
 function handleShuffle(action) {
@@ -251,7 +319,7 @@ function handleShuffle(action) {
   target.deck = shuffleWithTextSeed(target.deck, state.game.seed);
 }
 
-function handlePlay(action) {
+function handleToBase(action) {
     // Determinar si es yo o el oponente
   const target = state[action.seat];
   const targetName = action.seat;
@@ -262,13 +330,24 @@ function handlePlay(action) {
   let source = null;
     let index = -1;
 
-    index = target.hand.findIndex(c => c[1] === cardUuid);
+    index = target.ink.findIndex(c => c[1] === cardUuid);
     if (index !== -1) {
-      source = 'hand';
+      source = 'ink';
     } else {
-      index = target.ink.findIndex(c => c[1] === cardUuid);
+      index = target.field1.findIndex(c => c[1] === cardUuid);
       if (index !== -1) {
-        source = 'ink';
+        source = 'field1';
+      }else{
+            index = target.field2.findIndex(c => c[1] === cardUuid);
+          if (index !== -1) {
+            source = 'field2';
+          }else{
+                  index = target.field3.findIndex(c => c[1] === cardUuid);
+              if (index !== -1) {
+                source = 'field3';
+              }
+
+          }
       }
     }
 
@@ -279,7 +358,133 @@ function handlePlay(action) {
 
   // Sacar la carta de la mano
   const [card] = target[source].splice(index, 1);
-  target.field.push(card);
+  target.ink.push(card);
+}
+
+function handleMove1(action) {
+    // Determinar si es yo o el oponente
+  const target = state[action.seat];
+  const targetName = action.seat;
+
+    // UUID de la carta que llega en action.info
+  const cardUuid = action.info;
+
+  let source = null;
+    let index = -1;
+
+    index = target.ink.findIndex(c => c[1] === cardUuid);
+    if (index !== -1) {
+      source = 'ink';
+    } else {
+      index = target.field1.findIndex(c => c[1] === cardUuid);
+      if (index !== -1) {
+        source = 'field1';
+      }else{
+            index = target.field2.findIndex(c => c[1] === cardUuid);
+          if (index !== -1) {
+            source = 'field2';
+          }else{
+                  index = target.field3.findIndex(c => c[1] === cardUuid);
+              if (index !== -1) {
+                source = 'field3';
+              }
+
+          }
+      }
+    }
+
+    if (!source) {
+      console.warn("Carta no encontrada:", cardUuid);
+      return;
+    }
+
+  // Sacar la carta de la mano
+  const [card] = target[source].splice(index, 1);
+  target.field1.push(card);
+}
+
+function handleMove2(action) {
+    // Determinar si es yo o el oponente
+  const target = state[action.seat];
+  const targetName = action.seat;
+
+    // UUID de la carta que llega en action.info
+  const cardUuid = action.info;
+
+  let source = null;
+    let index = -1;
+
+    index = target.ink.findIndex(c => c[1] === cardUuid);
+    if (index !== -1) {
+      source = 'ink';
+    } else {
+      index = target.field1.findIndex(c => c[1] === cardUuid);
+      if (index !== -1) {
+        source = 'field1';
+      }else{
+            index = target.field2.findIndex(c => c[1] === cardUuid);
+          if (index !== -1) {
+            source = 'field2';
+          }else{
+                  index = target.field3.findIndex(c => c[1] === cardUuid);
+              if (index !== -1) {
+                source = 'field3';
+              }
+
+          }
+      }
+    }
+
+    if (!source) {
+      console.warn("Carta no encontrada:", cardUuid);
+      return;
+    }
+
+  // Sacar la carta de la mano
+  const [card] = target[source].splice(index, 1);
+  target.field2.push(card);
+}
+
+function handleMove3(action) {
+    // Determinar si es yo o el oponente
+  const target = state[action.seat];
+  const targetName = action.seat;
+
+    // UUID de la carta que llega en action.info
+  const cardUuid = action.info;
+
+  let source = null;
+    let index = -1;
+
+    index = target.ink.findIndex(c => c[1] === cardUuid);
+    if (index !== -1) {
+      source = 'ink';
+    } else {
+      index = target.field1.findIndex(c => c[1] === cardUuid);
+      if (index !== -1) {
+        source = 'field1';
+      }else{
+            index = target.field2.findIndex(c => c[1] === cardUuid);
+          if (index !== -1) {
+            source = 'field2';
+          }else{
+                  index = target.field3.findIndex(c => c[1] === cardUuid);
+              if (index !== -1) {
+                source = 'field3';
+              }
+
+          }
+      }
+    }
+
+    if (!source) {
+      console.warn("Carta no encontrada:", cardUuid);
+      return;
+    }
+
+  // Sacar la carta de la mano
+  const [card] = target[source].splice(index, 1);
+  target.field3.push(card);
 }
 
 function handleInk(action) {
@@ -297,9 +502,19 @@ function handleInk(action) {
     if (index !== -1) {
       source = 'hand';
     } else {
-      index = target.field.findIndex(c => c[1] === cardUuid);
+      index = target.field1.findIndex(c => c[1] === cardUuid);
       if (index !== -1) {
-        source = 'field';
+        source = 'field1';
+      }else{
+            index = target.field2.findIndex(c => c[1] === cardUuid);
+          if (index !== -1) {
+            source = 'field2';
+          }else{
+            index = target.field3.findIndex(c => c[1] === cardUuid);
+              if (index !== -1) {
+                source = 'field3';
+              }
+          }
       }
     }
 
@@ -341,7 +556,6 @@ function handleInk(action) {
   // Añadir la carta a la tinta
   target.ink.push(card);
 
-  console.log(state);
 }
 
 function handleDiscard(action) {
@@ -363,9 +577,19 @@ function handleDiscard(action) {
       if (index !== -1) {
         source = 'ink';
       } else {
-          index = target.field.findIndex(c => c[1] === cardUuid);
+          index = target.field1.findIndex(c => c[1] === cardUuid);
           if (index !== -1) {
-            source = 'field';
+            source = 'field1';
+          }else{
+            index = target.field2.findIndex(c => c[1] === cardUuid);
+              if (index !== -1) {
+                source = 'field2';
+              }else{
+                index = target.field3.findIndex(c => c[1] === cardUuid);
+                  if (index !== -1) {
+                    source = 'field3';
+                  }
+              }
           }
       }
     }
@@ -407,11 +631,21 @@ function handleBottom(action) {
       if (index !== -1) {
         source = 'ink';
       } else {
-          index = target.field.findIndex(c => c[1] === cardUuid);
+          index = target.field1.findIndex(c => c[1] === cardUuid);
           if (index !== -1) {
-            source = 'field';
+            source = 'field1';
+          }else{
+            index = target.field2.findIndex(c => c[1] === cardUuid);
+              if (index !== -1) {
+                source = 'field2';
+            }else{
+                   index = target.field3.findIndex(c => c[1] === cardUuid);
+              if (index !== -1) {
+                source = 'field3';
+            }
           }
       }
+    }
     }
 
     if (!source) {
@@ -456,11 +690,21 @@ function handleTop(action) {
       if (index !== -1) {
         source = 'ink';
       } else {
-          index = target.field.findIndex(c => c[1] === cardUuid);
+          index = target.field1.findIndex(c => c[1] === cardUuid);
           if (index !== -1) {
-            source = 'field';
+            source = 'field1';
+          }else{
+               index = target.field2.findIndex(c => c[1] === cardUuid);
+              if (index !== -1) {
+                source = 'field2';
+                } else{
+               index = target.field3.findIndex(c => c[1] === cardUuid);
+              if (index !== -1) {
+                source = 'field3';
           }
-      }
+          }
+    }
+    }
     }
 
     if (!source) {
@@ -556,13 +800,23 @@ function handleHand(action) {
   let source = null;
     let index = -1;
 
-    index = target.field.findIndex(c => c[1] === cardUuid);
+    index = target.field1.findIndex(c => c[1] === cardUuid);
     if (index !== -1) {
-      source = 'field';
+      source = 'field1';
     } else {
-      index = target.ink.findIndex(c => c[1] === cardUuid);
+      index = target.field2.findIndex(c => c[1] === cardUuid);
+      if (index !== -1) {
+        source = 'field2';
+      }else {
+      index = target.field3.findIndex(c => c[1] === cardUuid);
+      if (index !== -1) {
+        source = 'field3';
+      }else{
+        index = target.ink.findIndex(c => c[1] === cardUuid);
       if (index !== -1) {
         source = 'ink';
+      }
+      }
       }
     }
 
@@ -576,6 +830,7 @@ function handleHand(action) {
   card[2] = 1;
   card[4] = false;
   card[5] = 0;
+  card[9] = 0;
 
 
   card[6].forEach((el) => {
@@ -585,7 +840,7 @@ function handleHand(action) {
 
         const is_mine = (state.game.pos == targetName) ? true : false;
       // Añadir a la mano
-      target.hand.push([card,uuid, 1, is_mine, false, 0, [], [], false])
+      target.hand.push([card,uuid, 1, is_mine, false, 0, [], [], false, 0])
 
   });
 
@@ -598,7 +853,7 @@ function handleHand(action) {
 
         const is_mine = (state.game.pos == targetName) ? true : false;
       // Añadir a la mano
-      target.hand.push([card,uuid, 1, is_mine, false, 0, [], [], false])
+      target.hand.push([card,uuid, 1, is_mine, false, 0, [], [], false , 0])
 
   });
 
@@ -618,15 +873,25 @@ function handleExert(action){
   let source = null;
     let index = -1;
 
-    index = target.field.findIndex(c => c[1] === cardUuid);
+    index = target.field1.findIndex(c => c[1] === cardUuid);
     if (index !== -1) {
-      source = 'field';
+      source = 'field1';
     } else {
-      index = target.ink.findIndex(c => c[1] === cardUuid);
+      index = target.field2.findIndex(c => c[1] === cardUuid);
       if (index !== -1) {
-        source = 'ink';
+        source = 'field2';
+      }else {
+      index = target.field3.findIndex(c => c[1] === cardUuid);
+      if (index !== -1) {
+        source = 'field3';
+      }else{
+            index = target.ink.findIndex(c => c[1] === cardUuid);
+          if (index !== -1) {
+            source = 'ink';
+          }
       }
-    }
+      }
+      }
 
     if (!source) {
       console.warn("Carta no encontrada:", cardUuid);
@@ -635,6 +900,87 @@ function handleExert(action){
 
   target[source][index][4] = !target[source][index][4];
 }
+
+function handleShieldPlus(action){
+
+  // Determinar si es yo o el oponente
+  const target = state[action.seat];
+  const targetName = action.seat;
+
+    // UUID de la carta que llega en action.info
+  const cardUuid = action.info;
+
+  let source = null;
+    let index = -1;
+
+    index = target.field1.findIndex(c => c[1] === cardUuid);
+    if (index !== -1) {
+      source = 'field1';
+    }else{
+           index = target.field2.findIndex(c => c[1] === cardUuid);
+        if (index !== -1) {
+          source = 'field2';
+        }else{
+            index = target.field3.findIndex(c => c[1] === cardUuid);
+            if (index !== -1) {
+              source = 'field3';
+            }else{
+                index = target.ink.findIndex(c => c[1] === cardUuid);
+                if (index !== -1) {
+                  source = 'ink';
+                }
+            }
+        }
+    }
+
+    if (!source) {
+      console.warn("Carta no encontrada:", cardUuid);
+      return;
+    }
+
+  target[source][index][9] = target[source][index][9]+1;
+}
+
+function handleShieldMinus(action){
+
+  // Determinar si es yo o el oponente
+  const target = state[action.seat];
+  const targetName = action.seat;
+
+    // UUID de la carta que llega en action.info
+  const cardUuid = action.info;
+
+  let source = null;
+    let index = -1;
+
+    index = target.field1.findIndex(c => c[1] === cardUuid);
+    if (index !== -1) {
+      source = 'field1';
+    }else{
+           index = target.field2.findIndex(c => c[1] === cardUuid);
+        if (index !== -1) {
+          source = 'field2';
+        }else{
+            index = target.field3.findIndex(c => c[1] === cardUuid);
+            if (index !== -1) {
+              source = 'field3';
+            }else{
+                index = target.ink.findIndex(c => c[1] === cardUuid);
+                if (index !== -1) {
+                  source = 'ink';
+                }
+            }
+        }
+    }
+
+    if (!source) {
+      console.warn("Carta no encontrada:", cardUuid);
+      return;
+    }
+
+  target[source][index][9] = target[source][index][9]-1;
+}
+
 
 function handlePlusCounter(action){
     // Determinar si es yo o el oponente
@@ -647,9 +993,24 @@ function handlePlusCounter(action){
   let source = null;
     let index = -1;
 
-    index = target.field.findIndex(c => c[1] === cardUuid);
+    index = target.field1.findIndex(c => c[1] === cardUuid);
     if (index !== -1) {
-      source = 'field';
+      source = 'field1';
+    }else{
+           index = target.field2.findIndex(c => c[1] === cardUuid);
+        if (index !== -1) {
+          source = 'field2';
+        }else{
+            index = target.field3.findIndex(c => c[1] === cardUuid);
+            if (index !== -1) {
+              source = 'field3';
+            }else{
+                index = target.ink.findIndex(c => c[1] === cardUuid);
+                if (index !== -1) {
+                  source = 'ink';
+                }
+            }
+        }
     }
 
     if (!source) {
@@ -671,9 +1032,25 @@ function handleMinusCounter(action){
   let source = null;
     let index = -1;
 
-    index = target.field.findIndex(c => c[1] === cardUuid);
+    index = target.field1.findIndex(c => c[1] === cardUuid);
     if (index !== -1) {
-      source = 'field';
+      source = 'field1';
+    }else{
+        index = target.field2.findIndex(c => c[1] === cardUuid);
+        if (index !== -1) {
+          source = 'field2';
+        }else{
+            index = target.field3.findIndex(c => c[1] === cardUuid);
+                if (index !== -1) {
+                  source = 'field3';
+                }else{
+                    index = target.ink.findIndex(c => c[1] === cardUuid);
+                if (index !== -1) {
+                  source = 'ink';
+                }
+                }
+        }
+
     }
 
     if (!source) {
@@ -702,7 +1079,7 @@ function handleDraw7(action){
 
         const is_mine = (state.game.pos == targetName) ? true : false;
       // Añadir a la mano
-      target.hand.push([card,uuid, 1, is_mine, false, 0, [], [], false]) // Carta, Identificador Unico, Boca Arriba o Boca Abajo, es mia,  exerted, contadores, Boost
+      target.hand.push([card,uuid, 1, is_mine, false, 0, [], [], false, 0]) // Carta, Identificador Unico, Boca Arriba o Boca Abajo, es mia,  exerted, contadores, Boost
   }
 }
 
@@ -794,6 +1171,68 @@ function handleOpponentPlusLore(action){
 function handleYouMinusLore(action){
     state.game.lore_you -= 1;
 }
+
+function handleLoc1Minus(action){
+    if (action.seat == "you"){
+        state.game.loc_1_you -= 1;
+    }
+    if (action.seat == "opponent"){
+        state.game.loc_1_opp -= 1;
+    }
+
+}
+
+function handleLoc1Plus(action){
+    if (action.seat == "you"){
+        state.game.loc_1_you += 1;
+    }
+    if (action.seat == "opponent"){
+        state.game.loc_1_opp += 1;
+    }
+
+}
+
+
+function handleLoc2Minus(action){
+    if (action.seat == "you"){
+        state.game.loc_2_you -= 1;
+    }
+    if (action.seat == "opponent"){
+        state.game.loc_2_opp -= 1;
+    }
+
+}
+
+function handleLoc2Plus(action){
+    if (action.seat == "you"){
+        state.game.loc_2_you += 1;
+    }
+    if (action.seat == "opponent"){
+        state.game.loc_2_opp += 1;
+    }
+
+}
+
+function handleLoc3Minus(action){
+    if (action.seat == "you"){
+        state.game.loc_3_you -= 1;
+    }
+    if (action.seat == "opponent"){
+        state.game.loc_3_opp -= 1;
+    }
+
+}
+
+function handleLoc3Plus(action){
+    if (action.seat == "you"){
+        state.game.loc_3_you += 1;
+    }
+    if (action.seat == "opponent"){
+        state.game.loc_3_opp += 1;
+    }
+
+}
+
 function handleYouPlusLore(action){
 
     state.game.lore_you = state.game.lore_you + 1;
@@ -831,7 +1270,8 @@ function handleReturnHandFromDiscard(action) {
     false,       // exerted
     0,           // contadores
     [],          // boost
-    []           // shift
+    [],           // shift
+    0 // shields
   ]);
 }
 
@@ -903,7 +1343,7 @@ function handleGetCardToHandFromDeck(action){
 
     const is_mine = (state.game.pos == targetName) ? true : false;
   // Añadir a la mano
-  target.hand.push([card,uuid, 1, is_mine, false, 0, [], [], false]) // Carta, Identificador Unico, Boca Arriba o Boca Abajo, es mia,  exerted, contadores, Boost, Shift
+  target.hand.push([card,uuid, 1, is_mine, false, 0, [], [], false, 0]) // Carta, Identificador Unico, Boca Arriba o Boca Abajo, es mia,  exerted, contadores, Boost, Shift
 }
 
 function handleSendBottomFromDeck(action){
@@ -957,6 +1397,16 @@ function handleFinishGame(action){
     finishOverlay.classList.remove("hidden")
 }
 
+function handleAddEnergy(action){
+    const target = state[action.seat];
+    target.energy += 1;
+}
+
+function handleRemoveEnergy(action){
+    const target = state[action.seat];
+    target.energy -= 1;
+}
+
 
 function formatActionLog(action) {
   // 1️⃣ Obtener el nombre del usuario desde el state
@@ -969,8 +1419,8 @@ function formatActionLog(action) {
   const actionNames = {
     1: "Roba 1 carta",
     2: "Mezcla el mazo",
-    3: "Tinta",
-    4: "Juega",
+    3: "Despliega",
+    4: "Mueve a localización 1",
     5: "Descarta",
     6: "Coloca en el Bottom",
     7: "Coloca en el Top",
@@ -995,7 +1445,20 @@ function formatActionLog(action) {
     26: "Coloca del mazo al fondo",
     27: "Viaja a una Localización",
     28: "Finaliza la partida",
-    29: "Devuelve una Carta en el Mulligan"
+    29: "Devuelve una Carta en el Mulligan",
+    30: "Mueve a localización 2",
+    31: "Mueve a localización 3",
+    32: "Mueve a base",
+    33: "Añade Energía",
+    34: "Destruye Energía",
+    35: "Retrocede en Loc 1",
+    36: "Avanza en Loc 1",
+    37: "Retrocede en Loc 2",
+    38: "Avanza en Loc 2",
+    39: "Retrocede en Loc 3",
+    40: "Avanza en Loc 3",
+    41: "Obtiene escudo",
+    42: "Gasta escudo"
   };
   const actionText = actionNames[action.id_action] || "Acción desconocida";
 
@@ -1036,7 +1499,15 @@ function applyAction(action) {
         break
 
     case 4:
-        handlePlay(action)
+        handleMove1(action)
+        break
+
+     case 30:
+        handleMove2(action)
+        break
+
+    case 31:
+        handleMove3(action)
         break
 
     case 5:
@@ -1139,6 +1610,50 @@ function applyAction(action) {
         handleBottom(action)
         break
 
+    case 32:
+        handleToBase(action)
+        break
+
+    case 33:
+        handleAddEnergy(action)
+        break
+
+    case 34:
+        handleRemoveEnergy(action)
+        break
+
+    case 35:
+        handleLoc1Minus(action)
+        break
+
+    case 36:
+        handleLoc1Plus(action)
+        break
+
+    case 37:
+        handleLoc2Minus(action)
+        break
+
+    case 38:
+        handleLoc2Plus(action)
+        break
+
+    case 39:
+        handleLoc3Minus(action)
+        break
+
+    case 40:
+        handleLoc3Plus(action)
+        break
+
+    case 41:
+        handleShieldPlus(action)
+        break
+
+    case 42:
+        handleShieldMinus(action)
+        break
+
   }
 
 }
@@ -1201,8 +1716,6 @@ async function loadReadOnlyGame() {
   await get_all_actions();
 
   if (state.game.since_scn > 0) {
-    console.log("Carga Inicial");
-    console.log(all_actions.length);
 
     for (let i = 0; i < all_actions.length; i++) {
         index_actual_action = i+1;
@@ -1236,10 +1749,16 @@ let pendingCardSelectionForShift = null;
 
 function handleCardAction(cardId, actionName) {
   switch(actionName){
-    case "Jugar":
+    case "Mover 1":
         sendAction("PLAY", { info: cardId, seat: state.game.pos })
         break
-    case "Ink":
+    case "Mover 2":
+        sendAction("PLAY2", { info: cardId, seat: state.game.pos })
+        break
+    case "Mover 3":
+        sendAction("PLAY3", { info: cardId, seat: state.game.pos })
+        break
+    case "Jugar":
         sendAction("INK", { info: cardId, seat: state.game.pos })
         break
     case "Descarte":
@@ -1286,6 +1805,15 @@ function handleCardAction(cardId, actionName) {
     case "Location":
         sendAction("LOCATION", { info: cardId, seat: state.game.pos })
         break
+    case "Base":
+        sendAction("TO_BASE", { info: cardId, seat: state.game.pos })
+        break
+    case "+Shield":
+        sendAction("SHIELD_PLUS", { info: cardId, seat: state.game.pos })
+        break
+    case "-Shield":
+        sendAction("SHIELD_MINUS", { info: cardId, seat: state.game.pos })
+        break
   }
 
 }
@@ -1331,14 +1859,12 @@ function showCardMenu(cardElement, cardId, zoneName) {
 
   let actions = [];
   if (zoneName === "hand") {
-    actions = ["Ink", "Jugar", "Shift", "Descarte", "Bottom Deck", "Top Deck", "Bottom Mulligan"];
+    actions = ["Jugar", "Descarte", "Bottom Deck", "Top Deck", "Bottom Mulligan"];
   } else if (zoneName === "ink") {
-    actions = ["Girar", "Mano", "Boca Abajo", "Boca Arriba"];
+    actions = ["Girar", "+", "-", "Mover 1", "Mover 2", "Mover 3", "+Shield", "-Shield", "Descarte", "Mano", "Bottom Deck", "Top Deck"];
   } else if (zoneName === "field") {
     actions = [
-      "Girar", "+", "-", "Ink", "Descarte",
-      "Mano", "Bottom Deck", "Top Deck",
-      "Boost", "Location"
+      "Girar", "+", "-", "Mover 1", "Mover 2", "Mover 3", "+Shield", "-Shield", "Base", "Descarte", "Mano", "Bottom Deck", "Top Deck"
     ];
   }
 
@@ -1481,9 +2007,50 @@ if (draw7Button) {
   draw7Button.onclick = () => sendAction("DRAW7", {seat: state.game.pos});
 }
 
+const addEnergyButton = document.getElementById("add_energy");
+if (addEnergyButton) {
+  addEnergyButton.onclick = () => sendAction("ADD_ENERGY", {seat: state.game.pos});
+}
+
+const destroyEnergyButton = document.getElementById("remove_energy");
+if (destroyEnergyButton) {
+  destroyEnergyButton.onclick = () => sendAction("REMOVE_ENERGY", {seat: state.game.pos});
+}
+
 const discardAllHandButton = document.getElementById("discard-all-hand");
 if (discardAllHandButton) {
   discardAllHandButton.onclick = () => sendAction("DISCARD_HAND", {seat: state.game.pos});
+}
+
+
+const loc1MinusButton = document.getElementById("loc-1-minus");
+if (loc1MinusButton) {
+  loc1MinusButton.onclick = () => sendAction("LOC_1_MINUS", {seat: state.game.pos});
+}
+
+const loc1PlusButton = document.getElementById("loc-1-plus");
+if (loc1PlusButton) {
+  loc1PlusButton.onclick = () => sendAction("LOC_1_PLUS", {seat: state.game.pos});
+}
+
+const loc2MinusButton = document.getElementById("loc-2-minus");
+if (loc2MinusButton) {
+  loc2MinusButton.onclick = () => sendAction("LOC_2_MINUS", {seat: state.game.pos});
+}
+
+const loc2PlusButton = document.getElementById("loc-2-plus");
+if (loc2PlusButton) {
+  loc2PlusButton.onclick = () => sendAction("LOC_2_PLUS", {seat: state.game.pos});
+}
+
+const loc3MinusButton = document.getElementById("loc-3-minus");
+if (loc3MinusButton) {
+  loc3MinusButton.onclick = () => sendAction("LOC_3_MINUS", {seat: state.game.pos});
+}
+
+const loc3PlusButton = document.getElementById("loc-3-plus");
+if (loc3PlusButton) {
+  loc3PlusButton.onclick = () => sendAction("LOC_3_PLUS", {seat: state.game.pos});
 }
 
 const seeXInput = document.getElementById("see-x-value");
@@ -1630,7 +2197,6 @@ if (arrowLeftButton) {
     clearZones();
     state = buildInitialState()
     index_actual_action = index_actual_action - 1;
-    console.log(index_actual_action);
 
     const log = document.querySelector(".log");
         if (log) {

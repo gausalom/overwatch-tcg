@@ -2093,3 +2093,11 @@ footer {
     font-weight: bold;
     font-size: 19px;
 }
+
+.height-50 {
+    height: 50px;
+}
+
+.height-200 {
+    height: 200px;
+}
