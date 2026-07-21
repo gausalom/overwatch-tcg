@@ -31,6 +31,9 @@
                     <label for="is_inactive">Is Inactive</label>
                     <input type="checkbox" id="is_inactive" name="is_inactive" {% if user.is_inactive == 1 %}checked="checked"{% endif %}>
 
+                    <label for="num_booster_to_open">Num Booster to Open</label>
+                    <input type="number" id="num_booster_to_open" name="num_booster_to_open" value="{{user.num_booster_to_open}}">
+
                     <button type="submit">Guardar</button>
                 </form>
             </div>

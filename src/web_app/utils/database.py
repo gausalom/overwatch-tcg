@@ -702,10 +702,10 @@ class DatabaseManager:
     def update_user(self, user_info):
         query = """
         UPDATE PLAYER
-            SET TEAM=?, PLAYER_PASSWORD=?, IS_ADMIN = ?, IS_INACTIVE = ?
+            SET TEAM=?, PLAYER_PASSWORD=?, IS_ADMIN = ?, IS_INACTIVE = ?, NUM_BOOSTER_TO_OPEN = ?
             WHERE ID_PLAYER=?;
         """
         values = (
-            user_info['team'], user_info['password'], user_info['is_admin'], user_info['is_inactive'], user_info['id_player'],
+            user_info['team'], user_info['password'], user_info['is_admin'], user_info['is_inactive'], user_info['num_booster_to_open'], user_info['id_player'],
         )
         self.run_update_query(query, values)

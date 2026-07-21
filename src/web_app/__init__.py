@@ -1431,6 +1431,6 @@ def save_user_from_control_panel(user_id):
     else:
         all_info['is_inactive'] = 0
 
-    print(request.form)
+    all_info['num_booster_to_open'] = request.form['num_booster_to_open']
     databaseManager.update_user(all_info)
     return redirect('/control-panel')
