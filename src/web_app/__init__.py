@@ -1403,6 +1403,12 @@ def view_control_panel():
     return render_template('control-panel.html', all_users=all_users)
 
 
+@app.route('/rules', methods=['GET'])
+@login_required
+def view_rules():
+    return render_template('rules.html')
+
+
 @app.route('/control-panel/<user_id>', methods=['GET'])
 @login_required
 def view_control_panel_user(user_id):

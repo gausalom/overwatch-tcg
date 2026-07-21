@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+{% include "template_head.html" %}
+<body>
+
+        {% include "template_header.html" %}
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="content">
+            <div class="rules-container">
+
+                <section class="rules-section">
+                    <h2>Deck Construction</h2>
+                      <p>Each player must build a 40-card deck. Each deck must belong to a single faction:</p>
+                      <img class="faction-rule" src="{{ url_for('static', filename='img/ink/1.webp') }}" alt="vanguard">
+                      <img class="faction-rule" src="{{ url_for('static', filename='img/ink/2.webp') }}" alt="dominion">
+                      <img class="faction-rule" src="{{ url_for('static', filename='img/ink/3.webp') }}" alt="omnic">
+                      <img class="faction-rule" src="{{ url_for('static', filename='img/ink/4.webp') }}" alt="outlanders">
+                      <ul>
+                        <li>Vanguard</li>
+                        <li>Dominion</li>
+                        <li>Omnic</li>
+                        <li>Outlanders</li>
+                      </ul>
+
+                      <p>A deck may include <strong>Overwatch faction</strong> cards, as they are neutral and usable in all factions.</p>
+                      <img class="faction-rule" src="{{ url_for('static', filename='img/ink/ow.png') }}" alt="overwatch">
+                      <p>A deck cannot contain <strong>Location</strong> cards.</p>
+                      <p>In addition to the main deck, players must have a clearly differentiated <strong>Energy Orb deck</strong> consisting of 10 Energy Orbs.</p>
+                      <p>You may include no more than 3 copies of any card in your deck. </p>
+                      <br>
+                      <hr>
+                      <br>
+                      <h2>Game Setup</h2>
+                      <ol>
+                        <li>
+                          Decide which player goes first. It is recommended to roll a die. The winner chooses to go first or second.
+                        </li>
+                        <li>
+                          Randomly determine which map will be played.
+                          <em>(In competitive play, this rule may vary.)</em>
+                        </li>
+                        <li>Shuffle your deck.</li>
+                        <li>
+                          Each player draws 5 cards.
+                          <ul>
+                            <li>The Defender receives one temporary Energy Orb. Once used, it is discarded and cannot return to the game.</li>
+                            <li>Each player can put all his hand on the bottom of the deck and draw 5 new cards and shuffle the deck.</li>
+                          </ul>
+                        </li>
+                      </ol>
+                      <br>
+                      <hr>
+                      <br>
+                      <h2>Turn Structure</h2>
+                      <br>
+                      <h3>Start of Turn</h3>
+                  <br>
+                      <ol>
+                        <li>Ready all cards (Heroes and Energy Orbs).</li>
+                        <li>Add 2 ready Energy Orb to your reserve.</li>
+
+                        <li>Conquer.</li>
+                        <ul>
+                          <li>For each Location, compare total Conquest values.</li>
+                          <li>The winning player advances a number of points equal to the difference between both players.</li>
+                          <li>
+                            If the Conquest value is greater than 0 (meaning at least one Hero on each side) and both players are tied,
+                            each player advances 1 point.
+                          </li>
+                          <li>
+                            If the Conquest value surpasses 3, 6 and 8, the opponent can Scan +1. If the opponent conquers directly by passing through two points, Scan +2.
+                          </li>
+                          <li>
+                            Once a team reaches the required Conquest points for a Location, it becomes a
+                            <strong>Conquered Location</strong>, and no further conquest checks are made for it.
+                            However, Heroes may still use that Location.
+                          </li>
+                        </ul>
+                        <li>Trigger all "At the start of turn" triggers.</li>
+                        <li>Draw a card.</li>
+                      </ol>
+                      <br>
+                      <h3>Main Phase</h3>
+                  <br>
+                      <p>You may perform the following actions in any order and repeatedly unless otherwise specified:</p>
+                      <ul>
+                        <li>Play a card.</li>
+                        <li>Move a Hero to a Location by spending 1 Energy Orb.</li>
+                        <li>
+                          Activate a Hero’s ability by paying its associated cost.
+                          <br>Each ability may only be used once per turn.
+                        </li>
+                        <li>
+                          Exhaust a Hero to challenge another Hero.
+                          <ul>
+                            <li>When two Heroes attack each other, they deal damage simultaneously.</li>
+                            <li>If a Hero has both temporary shields and regular shields, the controller chooses which to use first.</li>
+                            <li>If a Hero’s health reaches 0 or less, it is defeated and placed in the discard pile.</li>
+                            <li>A Hero can not attack the turn is played.</li>
+                          </ul>
+                        </li>
+                        <li>If you play a Hero and already control 5 Heroes, you must sacrifice one.</li>
+                        <li>Use a Location ability. You may only do so if you have at least one Hero there. Each ability may only be used once per turn.</li>
+                      </ul>
+                      <br>
+                      <h3>End of Turn</h3><br>
+                      <ul>
+                        <li>Trigger all "At the end of turn" triggers.</li>
+                      </ul>
+                      <br>
+                      <hr>
+                      <br>
+                      <h2>Victory Condition</h2>
+                      <p>A player wins when they control the majority of Locations:</p>
+                      <ul>
+                        <li>On 3-Location maps: control 2.</li>
+                        <li>On 5-Location maps: control 3.</li>
+                        <li>On single-Location maps: control that Location.</li>
+                      </ul>
+
+                      <p>
+                        At the end of the turn, during the conquest check, if a player controls the majority of Locations,
+                        the game immediately ends.
+                      </p>
+
+                </section>
+
+            </div>
+        </main>
+
+    <script src="{{ url_for('static', filename='js/home.js') }}"></script>
+</body>
+{% include "footer.html" %}
+</html>

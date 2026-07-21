@@ -2101,3 +2101,55 @@ footer {
 .height-200 {
     height: 200px;
 }
+
+
+.rules-section {
+
+    max-width: 900px;
+    background-color: #1a1a1a;
+    border-radius: 16px;
+    border: 2px solid #ff7f00;
+    box-shadow: 0 0 30px rgba(255, 127, 0, 0.2);
+    padding: 60px 40px;
+}
+
+.rules-section h1.section-title {
+    color: #ff7f00;
+    font-size: 32px;
+    letter-spacing: 3px;
+    margin-bottom: 50px;
+}
+
+.rules-section h2 {
+    color: #ff7f00;
+    font-size: 22px;
+    margin-bottom: 20px;
+}
+
+.rules-section p {
+    color: #ddd;
+    font-size: 17px;
+    line-height: 1.6;
+      text-align: left;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.rules-section h3 {
+    text-align: left;
+    margin-left: 20px;
+}
+
+.rules-section li {
+    text-align: left;
+}
+
+.rules-container {
+    display: flex;
+    justify-content: center;
+    padding: 60px 20px;
+}
+
+.faction-rule {
+    width: 180px;
+}
