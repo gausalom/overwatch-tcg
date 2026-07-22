@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+{% include "template_head.html" %}
+<body>
+
+        {% include "template_header.html" %}
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="content">
+            <div class="cards-container">
+
+                <div class="cards-grid">
+                    {% for card in cards %}
+                    <div class="card-item">
+                        <div class="card-image">
+                            <img src="{{ url_for('static', filename='img/card_images/' + card) }}" alt="{{ card }}">
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+            </div>
+            <div id="imageModal" class="modal">
+                    <img class="modal-content" id="modalImg">
+                </div>
+            <script src="{{ url_for('static', filename='js/cards.js') }}"></script>
+        </main>
+
+</body>
+{% include "footer.html" %}
+</html>

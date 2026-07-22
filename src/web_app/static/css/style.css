@@ -1010,6 +1010,7 @@ button:hover {
 /* Imagen dentro del modal */
 .modal-content {
     max-width: 80%;
+    max-width: 500px;
     max-height: 80%;
     border-radius: 10px;
     box-shadow: 0 0 20px rgba(0,0,0,0.7);
@@ -2152,4 +2153,43 @@ footer {
 
 .faction-rule {
     width: 180px;
+}
+
+.cards-container {
+    padding: 20px 40px;
+}
+
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.card-item {
+    background-color: #1c1c1c;
+    border: 2px solid #ff7f00;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: 0.3s;
+    box-shadow: 0 0 15px rgba(255, 127, 0, 0.2);
+}
+
+.card-item:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 0 30px rgba(255, 127, 0, 0.9);
+}
+
+.card-image {
+    aspect-ratio: 3 / 4; /* proporción carta vertical */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.card-image img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
 }

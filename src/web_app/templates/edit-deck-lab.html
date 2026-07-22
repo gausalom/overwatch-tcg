@@ -64,23 +64,27 @@
                                   </label>
                                 {% endfor %}
                             </div>
-                             <h4>Color</h4>
+                             <h4>Facción</h4>
                              <div  class="filter-list-lab">
                                   <label>
                                     <input type="checkbox" class="filter-color" value="vanguard" {% if deck.faction == 1 %}checked{% endif %}>
                                     Vanguard
                                   </label>
                                  <label>
-                                    <input type="checkbox" class="filter-color" value="dominion" {% if deck.first_ink == 2 %}checked{% endif %}>
+                                    <input type="checkbox" class="filter-color" value="dominion" {% if deck.faction == 2 %}checked{% endif %}>
                                     Dominion
                                   </label>
                                  <label>
-                                    <input type="checkbox" class="filter-color" value="omnic" {% if deck.first_ink == 3 %}checked{% endif %}>
+                                    <input type="checkbox" class="filter-color" value="omnic" {% if deck.faction == 3 %}checked{% endif %}>
                                     Omnic
                                   </label>
                                  <label>
-                                    <input type="checkbox" class="filter-color" value="outlander" {% if deck.first_ink == 4 %}checked{% endif %}>
+                                    <input type="checkbox" class="filter-color" value="outlander" {% if deck.faction == 4 %}checked{% endif %}>
                                     Outlander
+                                  </label>
+                                 <label>
+                                    <input type="checkbox" class="filter-color" value="overwatch" >
+                                    Overwatch
                                   </label>
                             </div>
                         </div>

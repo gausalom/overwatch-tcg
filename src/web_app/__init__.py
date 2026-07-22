@@ -120,9 +120,10 @@ def return_collection(id_user):
         lineas = [line.strip() for line in deck_list.splitlines() if line.strip()]
         for line in lineas:
             card = dict()
-            card['card'] = line[2:]
-            card['name'] = line[2:]
-            card['qty'] = line[0]
+            lines = line.split(' ')
+            card['card'] = " ".join(lines[1:])
+            card['name'] = " ".join(lines[1:])
+            card['qty'] = lines[0]
             if not card['qty'].isdigit():
                 card['qty'] = 0
             else:
@@ -158,6 +159,7 @@ def view_profile():
     if user_data['num_booster_to_open'] is None: user_data['num_booster_to_open'] = 0
     if user_data['booster_last_opened'] is None:
         user_data['num_booster_to_open'] = 5
+        user_data['date'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         databaseManager.update_add_num_boosters_for_players(user_data)
     else:
         fecha = datetime.datetime.strptime(user_data['booster_last_opened'], "%Y-%m-%d %H:%M:%S")
@@ -176,6 +178,7 @@ def view_profile():
         if bloques_8h > 0: databaseManager.update_add_num_boosters_for_players(user_data)
 
     user_data = databaseManager.get_user(current_user.id)
+    user_data['next_booster'] = datetime.datetime.strptime(user_data['booster_last_opened'], "%Y-%m-%d %H:%M:%S") + datetime.timedelta(hours=8)
     return render_template('profile.html', deck=deck, user_data = user_data)
 
 
@@ -187,22 +190,33 @@ def view_open_booster():
     user_info = databaseManager.get_user(current_user.id)
     if user_info['num_booster_to_open']<=0: return redirect("/profile")
 
-    r1 = [c for c in metadata_cards if c['rarity'] == 1]
-    r2 = [c for c in metadata_cards if c['rarity'] == 2]
-    r3 = [c for c in metadata_cards if c['rarity'] == 3]
-    r4 = [c for c in metadata_cards if c['rarity'] == 4]
+    r1 = [c for c in metadata_cards if c['rarity'] == "Common"]
+    r2 = [c for c in metadata_cards if c['rarity'] == "Rare"]
+    r3 = [c for c in metadata_cards if c['rarity'] == "Epic"]
+    r4 = [c for c in metadata_cards if c['rarity'] == "Legendary"]
+    r5 = [c for c in metadata_cards if c['rarity'] == "Alpha"]
+    r6 = [c for c in metadata_cards if c['rarity'] == "Alternative Art"]
     # Elegir si la última será de rareza 3 o 4
-    ultima_rareza = random.choice([3, 4])
+    ultima_rareza = 3 if random.random() < 0.7 else 4
     r_final = r3 if ultima_rareza == 3 else r4
+
+    valor = random.uniform(0, 100)
+    if valor < 95:
+        r_especial = r2
+    elif valor < 99:
+        r_especial = r5
+    else:
+        r_especial = r6
 
     resultado = (
             random.sample(r1, 4) +
-            random.sample(r2, 2) +
+            random.sample(r2, 1) +
+            random.sample(r_especial, 1) +
             random.sample(r_final, 1)
     )
 
     # Mezclar el orden final
-    random.shuffle(resultado)
+
     collection = databaseManager.get_collection(current_user.id)[0]
     # Leer el texto existente
     contador = Counter()
@@ -232,21 +246,95 @@ def view_open_booster():
 @login_required
 def choose_faction(id_faction):
     list_by_faction = []
-    list_by_faction.append("""1 Doomfist - Supreme Warrior
-1 Doomfist - Fist of Conflict
-1 Moira - Dark Scientist
+    list_by_faction.append("""2 Winston - Defender of Humanity
+3 Winston - Visionary Scientist
+3 Brigitte - Field Engineer
+1 Brigitte - Loyal Defender
+3 Mercy - Battlefield Medic
+2 Mercy - Healing Angel
+3 Tracer - Lightning Messenger
+2 Tracer - Time Explorer
+3 Soldier: 76 - Vigilant Soldier
+2 Soldier: 76 - Tactical Veteran
+1 Return to Base
+1 Group Up
+2 Shields Up!
+1 Small Health Pack
+1 Large Health Pack
+1 Good Composition
+1 Sprint
+1 Cross-Fire
+1 Private Training
+1 Last Effort
+3 Push Please
+2 Unity Is Strength""")
+    list_by_faction.append("""2 Doomfist - Supreme Warrior
+3 Doomfist - Fist of Conflict
+3 Moira - Dark Scientist
 1 Moira - Genetic Manipulator
-    """)
-    list_by_faction.append("""2 Winston - Visionary Scientist
-2 Brigitte - Field Engineer
-        """)
+2 Baptiste - Tactical Medic
+3 Baptiste - Redeemed Mercenary
+3 Widowmaker - Deadly Sniper
+2 Widowmaker - Silent Assassin
+3 Sombra - Master Hacker
+2 Sombra - Shadow Manipulator
+1 Return to Base
+1 Group Up
+2 Shields Up!
+1 Small Health Pack
+1 Large Health Pack
+1 Good Composition
+1 Sprint
+1 Cross-Fire
+1 Private Training
+1 Last Effort
+3 It's a trap
+2 Don't trust me""")
 
-    list_by_faction.append("""3 Winston - Visionary Scientist
-2 Brigitte - Field Engineer
-            """)
-    list_by_faction.append("""4 Winston - Visionary Scientist
-    2 Brigitte - Field Engineer
-                """)
+    list_by_faction.append("""2 Orisa - Progressive Sentinel
+3 Orisa - Guardian of Peace
+3 Zenyatta - Omnic Monk
+2 Zenyatta - Spiritual Guide
+2 Juno - Space Scientist
+3 Juno - Explorer of the Future
+3 Echo - Evolution Prototype
+1 Echo - Artificial Intelligence
+3 Torbjorn - Creator of Defenses
+2 Torbjorn - Engineer of War
+1 Return to Base
+1 Group Up
+2 Shields Up!
+1 Small Health Pack
+1 Large Health Pack
+1 Good Composition
+1 Sprint
+1 Cross-Fire
+1 Private Training
+1 Last Effort
+3 Start the Rebellion
+2 Magic Screwdriver""")
+    list_by_faction.append("""1 Zarya - Human Shield
+3 Zarya - Iron Will
+3 Lifeweaver - Guardian of Life
+2 Lifeweaver - Weaver of Destiny
+2 Illari - Arcane Warrior
+3 Illari - Sentinel of Light
+3 Junkrat - Explosive Engineer
+2 Junkrat - Artist of Destruction
+3 Hanzo - Storm of Arrows
+2 Hanzo - Dragon Master
+1 Return to Base
+1 Group Up
+2 Shields Up!
+1 Small Health Pack
+1 Large Health Pack
+1 Good Composition
+1 Sprint
+1 Cross-Fire
+1 Private Training
+1 Last Effort
+3 Surrender Please
+2 Tic-Tac-Toe""")
     data = dict()
     data['id_player'] = current_user.id
     data['deck_list'] = list_by_faction[int(id_faction)-1]
@@ -1407,6 +1495,15 @@ def view_control_panel():
 @login_required
 def view_rules():
     return render_template('rules.html')
+
+
+@app.route('/cards', methods=['GET'])
+@login_required
+def view_cards():
+    all_cards = []
+    for card in metadata_cards:
+        all_cards.append(card['image'])
+    return render_template('cards.html', cards=all_cards)
 
 
 @app.route('/control-panel/<user_id>', methods=['GET'])

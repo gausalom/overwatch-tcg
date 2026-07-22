@@ -8,7 +8,7 @@
         <!-- CONTENIDO PRINCIPAL -->
         <main class="content">
 
-            {% if user_data.num_booster_to_open > 0 %}
+            {% if user_data.num_booster_to_open > 0 and deck.all_cards | length > 0 %}
             <!-- ABRIR NUEVOS SOBRES -->
             <div class="comments-section">
                 <h4>Sobres por abrir: {{user_data.num_booster_to_open}}</h4>
@@ -18,6 +18,7 @@
 
             </div>
             {% endif %}
+
 
             {% if deck.all_cards | length > 0 %}
             <div class="deck-view">
@@ -58,14 +59,22 @@
 
                 </div>
             {% endif %}
-
+            <div class="comments-section">
+                <p>Última compra: <b>{{user_data.booster_last_opened}}</b></p>
+                <p>El siguiente sobre lo podrás comprar: {{user_data.next_booster}}</p>
+                <p>Puedes comprar un sobre cada 8 horas.</p><br>
+                <p>Cada sobre contiene 7 cartas: </p><br>
+                <p>4 Comunes</p>
+                <p>1 Rara</p>
+                <p>1 Carta de las siguientes rarezas: Rara 95% o Alpha 4% o Arte Alternativo 1% </p>
+                <p>1 Carta de las siguientes rarezs: Épica 70% o Legendaria 30%</p>
+                <p></p>
+                <p></p>
+            </div>
 
         </main>
 
-    <script src="{{ url_for('static', filename='js/copy.js') }}"></script>
     <script src="{{ url_for('static', filename='js/modal.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/chart.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/deck-chart.js') }}"></script>
 </body>
 {% include "footer.html" %}
 </html>

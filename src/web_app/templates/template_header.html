@@ -10,6 +10,7 @@
         <a href="/tavern">El Observatorio</a>
         <a href="/calendar">Calendario</a>
         <a href="/rules">Reglas</a>
+        <a href="/cards">Cartas</a>
         {% if current_user.is_admin == 1%}<a href="/control-panel">Panel de Control</a>{% endif %}
         <a href="/logout">Desconectar</a>
     </nav>
@@ -20,6 +21,8 @@
         <option value="/decks">Mazos</option>
         <option value="/profile">Perfil</option>
         <option value="/calendar">Calendario</option>
+        <option value="/rules">Reglas</option>
+        <option value="/cards">Cartas</option>
         {% if current_user.is_admin == 1%}<option value="/control-panel">Panel de Control</option>{% endif %}
         <option value="/logout">Desconectar</option>
     </select>

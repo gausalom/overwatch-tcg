@@ -197,16 +197,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const ink_img = document.createElement("img");
         ink_img.className = "card-img-ink";
-        if(entry.card.faction=='vanguard'){
+        if(entry.card.faction.toLowerCase()=='vanguard'){
             ink_img.src = `/static/img/ink/1.webp`;
-        }else if(entry.card.faction=='dominion'){
+        }else if(entry.card.faction.toLowerCase()=='dominion'){
             ink_img.src = `/static/img/ink/2.webp`;
-        }else if(entry.card.faction=='omnic'){
+        }else if(entry.card.faction.toLowerCase()=='omnic'){
             ink_img.src = `/static/img/ink/3.webp`;
-        }else if(entry.card.faction=='outlander'){
+        }else if(entry.card.faction.toLowerCase()=='outlanders'){
             ink_img.src = `/static/img/ink/4.webp`;
         }else{
-            ink_img.src = `/static/img/ink/1.webp`;
+            ink_img.src = `/static/img/ink/ow.png`;
         }
 
         // Coste + tintable
@@ -276,7 +276,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const typeMatch = activeTypes.length === 0 || activeTypes.includes(c.type);
 
       const colorMatch = activeColors.length === 0 ||
-          activeColors.some(color => c.faction.includes(color));
+          activeColors.some(color => c.faction.toLowerCase().includes(color));
 
       const costMatch = activeCost.length === 0 || activeCost.includes(c.cost);
 
@@ -396,7 +396,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function addToDeck(card) {
     if(deck[card.id]){
-        if (deck[card.id].qty>3) {
+        if (deck[card.id].qty>2) {
             return;
         }
     }
@@ -420,7 +420,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetAndRender("");
   renderDeck();
 
-  observer.observe(document.getElementById("loadMoreTrigger"));
+  //observer.observe(document.getElementById("loadMoreTrigger"));
 });
 
 
